@@ -20,8 +20,8 @@
 
 ## Installation Guide
 - Install via Magisk app or Recovery
-- See "Troubleshootings" section if you using other audio mods
-- Reboot (reboot twice don't reflash, if you have Magisk sepolicy.rule bug)
+- Install any of MIUI app Magisk Module which depended with this MIUI Core Magisk Module
+- Reboot
 
 ## Optional
 
