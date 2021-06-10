@@ -3,8 +3,6 @@
 ## Descriptions
 - System core framework of MIUI ROM ported for non-MIUI ROM.
 - Required for running any MIUI apps (non-Play Store version) in non-MIUI ROM.
-- Changing ro.product.manufacturer to "Xiaomi" to be the video editor working.
-- Conflicting with modules which also changing ro.product.manufacturer.
 - MIUI apps must have these 3 lines after `<application />` in their AndroidManifest.xml to use this MIUI Core:
 
   `<uses-library android:name="miuiframework" />`
