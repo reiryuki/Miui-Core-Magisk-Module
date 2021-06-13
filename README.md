@@ -40,6 +40,6 @@
 - https://www.paypal.me/reiryuki
 
 ## Download
-- Tap here > https://www.pling.com/p/1537512/
+- Tap Release bellow
 
 
