@@ -21,6 +21,9 @@
 - Install any of MIUI app Magisk Module which depended with this MIUI Core Magisk Module
 - Reboot
 
+## MIUI apps Magisk Module available
+- https://github.com/reiryuki/MIUI-Gallery-Magisk-Module
+
 ## Optional
 
 ## Troubleshootings
