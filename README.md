@@ -2,7 +2,7 @@
 
 ## Descriptions
 - System core framework of MIUI ROM ported for non-MIUI ROM.
-- Required for running any ported MIUI apps (non-Play Store version) in non-MIUI ROM without editing classes.dex.
+- Required for running any ported MIUI apps (non-Play Store version) Magisk modules.
 - MIUI apps must have these 3 lines after `<application />` in their AndroidManifest.xml to use this MIUI Core:
 
   `<uses-library android:name="miuiframework" />`
