@@ -1,9 +1,9 @@
-# MIUI Core Magisk Module
+# Miui Core Magisk Module
 
 ## Descriptions
-- System core framework of MIUI ROM ported for non-MIUI ROM.
-- Required for running any ported MIUI apps (non-Play Store version) Magisk modules.
-- MIUI apps must have these 3 lines after `<application />` in their AndroidManifest.xml to use this MIUI Core:
+- System core framework of Miui ROM ported for non-Miui ROM.
+- Required for running any ported Miui apps (non-Play Store version) Magisk modules.
+- Miui apps must have these 3 lines after `<application />` in their AndroidManifest.xml to use this Miui Core:
 
   `<uses-library android:name="miuiframework" />`
 
@@ -12,17 +12,17 @@
   `<uses-library android:name="com.miui.system" />`
 
 ## Requirements
-- Not in MIUI ROM
+- Not in Miui ROM
 - Android 6 until 12
 - Magisk installed
 
 ## Installation Guide
 - Install via Magisk app or Recovery
-- Install any of MIUI app Magisk Module which depended with this MIUI Core Magisk Module
+- Install any of Miui app Magisk Module which depended with this Miui Core Magisk Module
 - Reboot
 
-## MIUI Apps Magisk Module Available
-- https://github.com/reiryuki/MIUI-Gallery-Magisk-Module
+## Miui Apps Magisk Modules Available
+- https://github.com/reiryuki/Miui-Gallery-Magisk-Module
 
 ## Optional
 
