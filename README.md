@@ -23,6 +23,7 @@
 
 ## Miui Apps Magisk Modules Available
 - https://github.com/reiryuki/Miui-Gallery-Magisk-Module
+- https://github.com/reiryuki/Miui-Screen-Recorder-Magisk-Module
 
 ## Optional
 
