@@ -34,7 +34,8 @@
 - If you don't do above, it will be closed immediately
 
 ## Credits and contributors
-- Android Package Port Factory Team
+- Android Ryuki Mods Discussions Team
+- https://t.me/androidryukimodsdiscussions/25188
 
 ## Thanks for Donations
 - https://t.me/androidryukimodsdiscussions/2619
