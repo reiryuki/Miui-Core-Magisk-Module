@@ -48,5 +48,8 @@
 
 ## Download
 - Tap here > https://www.pling.com/p/1537512/
+- D version = using ro.product.device for detecting device specific
+- N version = using ro.product.name for detecting device specific
+- Use whichever version you want
 
 
