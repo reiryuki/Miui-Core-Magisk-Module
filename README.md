@@ -4,11 +4,11 @@
 - System core framework of Miui ROM ported for non-Miui ROM as a dependency of any Miui apps (non-Play Store version) Magisk modules.
 - For developers, your Miui apps must declare these 3 lines after `<application />` in their AndroidManifest.xml if you want to load classes from this Miui Core:
 
-  `<uses-library android:name="miuiframework" />`
+  `<uses-library android:name="miuiframework" android:required="false" />`
 
-  `<uses-library android:name="com.miui.core" />`
+  `<uses-library android:name="com.miui.core" android:required="false" />`
 
-  `<uses-library android:name="com.miui.system" />`
+  `<uses-library android:name="com.miui.system" android:required="false" />`
 
   Do not do these if your app have it's own classes!
 
