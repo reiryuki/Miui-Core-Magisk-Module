@@ -9,6 +9,7 @@
   `<uses-library android:name="com.miui.system" android:required="false" />`
 
   This line is only required for v2.4 and bellow:
+  
   `<uses-library android:name="miuiframework" android:required="false" />`
 
 ## Requirements
