@@ -26,7 +26,6 @@
 - https://github.com/reiryuki/Miui-Gallery-Magisk-Module
 - https://github.com/reiryuki/Miui-Screen-Recorder-Magisk-Module
 - https://github.com/reiryuki/Miui-Security-Center-Magisk-Module
-- https://github.com/reiryuki/MiSound-UI-Magisk-Module
 
 ## Tested on
 - CrDroid ROM Android 10 arm64
