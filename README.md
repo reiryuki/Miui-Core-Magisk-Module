@@ -2,7 +2,7 @@
 
 ## Descriptions
 - System core framework of Miui ROM ported for non-Miui ROM as a dependency of any Miui apps (non-Play Store version) Magisk modules.
-- For developers, your Miui app must declare these lines after `<application />` in the AndroidManifest.xml if you want to load classes from this Miui Core: (Do not do this if your app have it's own classes!)
+- For Magisk module developers, your Miui app must declare these lines after `<application />` in the AndroidManifest.xml if you want to load classes from this Miui Core: (Do not do this if your app have it's own classes!)
 
   `<uses-library android:name="com.miui.core" android:required="false" />`
 
@@ -26,6 +26,7 @@
 - https://github.com/reiryuki/Miui-Gallery-Magisk-Module
 - https://github.com/reiryuki/Miui-Screen-Recorder-Magisk-Module
 - https://github.com/reiryuki/Miui-Security-Center-Magisk-Module
+- https://github.com/reiryuki/Mi-Wallpaper-Carousel-Magisk-Module
 
 ## Tested on
 - CrDroid ROM Android 10 arm64
