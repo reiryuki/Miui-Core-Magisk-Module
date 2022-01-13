@@ -28,7 +28,7 @@
 - https://github.com/reiryuki/Miui-Gallery-Magisk-Module
 - https://github.com/reiryuki/Miui-Screen-Recorder-Magisk-Module
 - https://github.com/reiryuki/Miui-Security-Center-Magisk-Module
-- https://github.com/reiryuki/Mi-Wallpaper-Carousel-Magisk-Module
+- https://github.com/reiryuki/Miui-Home-Magisk-Module
 
 ## Tested on
 - CrDroid ROM Android 10
@@ -52,8 +52,4 @@
 
 ## Download
 - Tap here > https://www.pling.com/p/1537512/
-- D version = using ro.product.device for detecting device specific
-- N version = using ro.product.name for detecting device specific
-- Use whichever version you want
-
 
