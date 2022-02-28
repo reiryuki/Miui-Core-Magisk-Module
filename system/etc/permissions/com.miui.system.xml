@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<permissions>
+    <library name="com.miui.system"
+        file="/system/app/miuisystem/miuisystem.apk"/>
+    <library name="miuiframework"
+        file="/system/app/miuisystem/miuisystem.apk"/>
+</permissions>
+

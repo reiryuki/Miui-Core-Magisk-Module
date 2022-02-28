@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<permissions>
+    <library name="cloud-common.jar"
+        file="/system/framework/cloud-common-runtime.jar"
+        dependency="org.apache.http.legacy"/>
+</permissions>
+
+
+
