@@ -29,15 +29,13 @@
     <!--whether the device supports page layout-->
     <bool name="support_page_layout">false</bool>
     <!--whether the device supports record param-->
-    <bool name="support_record_param">false</bool>
+    <bool name="support_record_param">true</bool>
     <!--whether the device supports interview record param-->
-    <bool name="support_interview_record_param">false</bool>
+    <bool name="support_interview_record_param">true</bool>
     <!--whether the device supports stereo record-->
     <bool name="support_stereo_record">true</bool>
     <!--whether the device supports hd record param-->
-    <bool name="support_hd_record_param">false</bool>
-    <!--whether the device supports voip record -->
-    <bool name="support_voip_record">true</bool>
+    <bool name="support_hd_record_param">true</bool>
     <!--whether the device supports screenrecorder inner-sound recorder mode-->
     <integer name="support_inner_record">1</integer>
     <!--whether the device supports screen paper mode-->
@@ -89,13 +87,15 @@
     <!--whether the device supports steps_provider-->
     <bool name="support_steps_provider">true</bool>
     <!--whether the device support hall sensor-->
-    <bool name="support_hall_sensor">true</bool>
+    <bool name="support_hall_sensor">false</bool>
     <!--whether the device supports hifi-->
     <bool name="support_hifi">false</bool>
     <!--whether the device supports agps parameters-->
     <bool name="support_agps_paras">true</bool>
     <!--whether the device supports agps roaming-->
     <bool name="support_agps_roaming">false</bool>
+    <!-- Support Android Flashlight Controller -->
+    <bool name="support_android_flashlight">true</bool>
     <!--whether the device supports IR-->
     <!-- Support Dual Gps-->
     <bool name="support_dual_gps">true</bool>
@@ -217,7 +217,7 @@
     <!--whether support main show XiaoAi-->
     <bool name="support_main_xiaoai">true</bool>
     <!--battery capacity typ of the device-->
-    <string name="battery_capacity_typ">4500</string>
+    <string name="battery_capacity_typ">3300</string>
     <!--the vendor feature, it's value may be qcom,mediatek,leadcore or nvidia-->
     <string name="vendor">qcom</string>
     <!--release time for the device, should be an unix timestamp-->
@@ -237,7 +237,7 @@
     <!--whether rotate the final image in camera isp-->
     <bool name="is_camera_isp_rotated">false</bool>
     <!--max cpu freq of the device-->
-    <integer name="cpu_max_freq">284</integer>
+    <integer name="cpu_max_freq">290</integer>
     <!--Successful flag of camera continuous auto focus  result-->
     <integer name="camera_focus_success_flag">2</integer>
     <!--total steps number of camera compensation-->
@@ -246,9 +246,9 @@
     <float name="camera_front_count_down_margin">-0.5573</float>
     <bool name="front_fingerprint_sensor">false</bool>
     <!--whether the device supports smart cover with small window-->$
-    <bool name="support_small_win_cover">true</bool>
+    <bool name="support_small_win_cover">false</bool>
     <!--0: x7 type; 1: A1 type -->
-    <integer name="small_win_cover_type">1</integer>
+    <integer name="small_win_cover_type">0</integer>
     <integer name="smartcover_smallwindow_left">0</integer>
     <integer name="smartcover_smallwindow_top">0</integer>
     <integer name="smartcover_smallwindow_right">1080</integer>
@@ -259,12 +259,8 @@
         <item>uinput-goodix</item>
     </string-array>
     <bool name="support_tap_fingerprint_sensor_to_home">false</bool>
-    <!-- finger for alipay. default do not need config. -->
-    <string name="finger_alipay_ifaa_model">Xiaomi-cmi</string>
     <!-- type of soter finger pay, config by owner of soter -->
     <integer name="type_soter_finger_pay">2</integer>
-    <!-- wheter the device support widevine l1, 1: support, 2: ota_support -->
-    <integer name="support_widevine_l1">2</integer>
     <!-- finger record, config by owner -->
     <integer name="type_mqs_finger_record">3</integer>
     <!--wheater the device supports persist screen color in driver-->
@@ -304,24 +300,14 @@
         <item>com.phonetest.application</item>
         <item>com.phonetest.application.test</item>
         <item>com.ss.android.ugc.aweme</item>
-        <item>com.xiaomi.cameratest</item>
-        <item>com.blink.academy.protake</item>
-    </string-array>
-    <!--These app can only access physical camera -->
-    <string-array name="camera_hide_logical_package_list">
-        <item>com.blink.academy.protake</item>
-    </string-array>
-    <!--   -->
-    <string-array name="camera_adjust_picture_size_cmd_list">
-        <!-- camera id 0 set sensor size 108M, camera id 1 set sensor size 20M -->
-        <item>com.antutu:0, ssize, 12032, 9024;1, ssize, 5184, 3880</item>
+        <item>com.miui.cameratest</item>
     </string-array>
     <!--still beautify value for 3rd party call-->
     <string name="extra_still_beautify_value">i:2</string>
     <!--min previewsize value for video call case-->
     <integer name="extra_min_preview_size">921600</integer>
     <!--Led light features-->
-    <bool name="support_led_light">false</bool>
+    <bool name="support_led_light">true</bool>
     <bool name="support_led_color">false</bool>
     <bool name="support_audio_loopback">true</bool>
     <bool name="support_new_silentmode">true</bool>
@@ -405,8 +391,6 @@
     <bool name="support_psensor_pocket_mode">false</bool>
     <!--whether camera support realtime manual exposure time-->
     <bool name="support_realtime_manual_exposure_time">true</bool>
-    <!--camera_adjust_picture_size_enabled-->
-    <bool name="camera_adjust_picture_size_enabled">true</bool>
     <!--whether sensor_has_latency-->
     <bool name="sensor_has_latency">true</bool>
     <!-- whether disable always discoverable -->
@@ -416,29 +400,20 @@
     <string name="bluetooth_boost_value">0x000011C0</string>
     <!-- whether support fast connect bluetooth device -->
     <bool name="support_bluetooth_fast_connect">true</bool>
-    <!-- whether support fast connect for blackshark -->
-    <bool name="support_blackshark_fast_connect">true</bool>
-    <bool name="support_blackshark_right_fast_connect">true</bool>
-    <!-- whether support ai task button -->
-    <bool name="support_ai_task">false</bool>
-    <!-- whether support touch gamemode -->
-    <bool name="support_touchfeature_gamemode">true</bool>
+    <!-- whether support bluetooth cloud data -->
+    <bool name="support_bluetooth_cloud_data">true</bool>
     <!-- whether support LHDC codec offload -->
-    <bool name="support_lhdc_offload">true</bool>
+    <bool name="support_lhdc">false</bool>
     <!-- whether support a2dp latency-->
     <bool name="support_a2dp_latency">true</bool>
+    <!-- whether support ai task button -->
+    <bool name="support_ai_task">true</bool>
+    <!-- whether support touch gamemode -->
+    <bool name="support_touchfeature_gamemode">true</bool>
     <!-- whether support display gamemode -->
     <bool name="support_displayfeature_gamemode">true</bool>
-    <!-- whether support fps change -->
-    <integer-array name="fpsList">
-        <item>90</item>
-        <item>60</item>
-    </integer-array>
-    <integer name="defaultFps">90</integer>
     <!-- whether support wlan low latency mode -->
     <bool name="support_wifi_low_latency_mode">true</bool>
-    <!-- whether support network rps mode -->
-    <bool name="support_network_rps_mode">true</bool>
     <!-- whether support extreme mode only support perseus-->
     <bool name="support_extreme_battery_saver">false</bool>
     <!--These region support face unlock-->
@@ -454,127 +429,27 @@
     <bool name="support_multi_face_input_global">true</bool>
     <!-- whether support ifaa 2dfa feature -->
     <integer name="ifaa_2dfa_support">0</integer>
+    <!-- whether support dc backlight -->
+    <bool name="support_dc_backlight">true</bool>
+    <!-- whether support dc backlight dimming -->
+    <bool name="support_dc_backlight_dimming">false</bool>
+    <!-- dimming level for dc backlight -->
+    <float name="dc_backlight_dimming_level">1.0</float>
     <!-- Support ARCore, This feature is subjected to change if google defines a standard feature.-->
     <bool name="support_ar_core">true</bool>
     <!-- whether support_screen_on_delayed -->
     <bool name="support_screen_on_delayed">true</bool>
     <!-- whether support hangup while screen turnning off -->
     <bool name="support_hangup_while_screen_off">true</bool>
-    <!-- whether support dc backlight -->
-    <bool name="support_dc_backlight">true</bool>
-    <!-- whether support display expert mode -->
-    <bool name="support_display_expert_mode">true</bool>
-    <!-- display expert mode color gamut default -->
-    <integer name="expert_gamut_default">0</integer>
-    <!-- display expert mode color gamut min -->
-    <integer name="expert_gamut_min">0</integer>
-    <!-- display expert mode color gamut max -->
-    <integer name="expert_gamut_max">3</integer>
-    <!-- display expert mode RGB default -->
-    <integer name="expert_RGB_default">255</integer>
-    <!-- display expert mode RGB min -->
-    <integer name="expert_RGB_min">50</integer>
-    <!-- display expert mode RGB max -->
-    <integer name="expert_RGB_max">255</integer>
-    <!-- display expert mode hue default -->
-    <integer name="expert_hue_default">0</integer>
-    <!-- display expert mode hue min -->
-    <integer name="expert_hue_min">-180</integer>
-    <!-- display expert mode hue max -->
-    <integer name="expert_hue_max">180</integer>
-    <!-- display expert mode saturation default -->
-    <integer name="expert_saturation_default">0</integer>
-    <!-- display expert mode saturation min -->
-    <integer name="expert_saturation_min">-50</integer>
-    <!-- display expert mode saturation max -->
-    <integer name="expert_saturation_max">50</integer>
-    <!-- display expert mode value default -->
-    <integer name="expert_value_default">0</integer>
-    <!-- display expert mode value min -->
-    <integer name="expert_value_min">-255</integer>
-    <!-- display expert mode value max -->
-    <integer name="expert_value_max">255</integer>
-    <!-- display expert mode contrast default -->
-    <integer name="expert_contrast_default">0</integer>
-    <!-- display expert mode contrast min -->
-    <integer name="expert_contrast_min">-100</integer>
-    <!-- display expert mode contrast max -->
-    <integer name="expert_contrast_max">100</integer>
-    <!-- display expert mode gamma default -->
-    <integer name="expert_gamma_default">220</integer>
-    <!-- display expert mode gamma min -->
-    <integer name="expert_gamma_min">170</integer>
-    <!-- display expert mode gamma max -->
-    <integer name="expert_gamma_max">270</integer>
-    <!-- support video toolbox -->
-    <bool name="is_support_video_tool_box">true</bool>
+    <bool name="aod_support_keycode_goto_dismiss">true</bool>
+    <!-- whether support voip while in DND mode -->
+    <bool name="support_custom_zen_priority_exception_pkg">true</bool>
     <!-- whether support video box display effect -->
     <bool name="support_videobox_display_effect">true</bool>
-    <!-- gamebooster mi time -->
-    <bool name="support_game_mi_time">true</bool>
-    <!-- whether support true color -->
-    <bool name="support_true_color">true</bool>
-    <!-- whether support keycode_goto_dismiss -->
-    <bool name="aod_support_keycode_goto_dismiss">true</bool>
+    <!-- whether support sound assist function -->
+    <bool name="support_sound_assist">true</bool>
     <!-- FOD solution -->
     <integer name="fod_solution">3</integer>
     <!-- whether support low brightness FOD -->
     <bool name="support_low_brightness_fod">false</bool>
-    <!-- whether support sound assist function -->
-    <bool name="support_sound_assist">true</bool>
-    <!-- Whether support sunlight mode -->
-    <bool name="config_sunlight_mode_available">true</bool>
-
-    <!-- EdgeSettings Adjust settings -->
-    <integer-array name="edge_suppresson_condition">
-        <!-- The max Allow to Adjust -->
-        <item>50</item>
-        <item>2</item>
-        <item>4</item>
-        <item>6</item>
-        <item>8</item>
-        <item>10</item>
-    </integer-array>
-
-    <integer-array name="edge_suppresson_absolute">
-        <item>0</item>
-        <item>3</item>
-        <item>5</item>
-        <item>8</item>
-        <item>10</item>
-    </integer-array>
-
-    <integer-array name="edge_suppresson_corner">
-        <item>150</item>
-        <item>300</item>
-        <item>170</item>
-        <item>170</item>
-    </integer-array>
-
-    <integer-array name="edge_suppresson_size">
-        <item>12</item>
-        <item>96</item>
-    </integer-array>
-
-    <!-- whether support smart eyecare -->
-    <bool name="support_smart_eyecare">false</bool>
-    <!-- whether support paper eyecare-->
-    <bool name="support_paper_eyecare">true</bool>
-    <!-- default color temp for paper eyecare -->
-    <float name="paper_eyecare_default_value">91.0</float>
-    <!-- default texture for paper eyecare -->
-    <integer name="paper_eyecare_default_texture">13</integer>
-    <!-- texture min value for paper eyecare -->
-    <integer name="paper_eyecare_min_texture">0</integer>
-    <!-- texture max value for paper eyecare -->
-    <integer name="paper_eyecare_max_texture">25</integer>
-    <!-- support mi game countdown -->
-    <bool name="support_mi_game_countdown">true</bool>
-    <!-- Sunlight mode threshold, 4096 level backlight is 1000, 2047 is 500-->
-    <integer name="threashold_sunlight_brightness">1000</integer>
-    <!-- whether support Macro Keyboard -->
-    <bool name="support_mi_game_macro">true</bool>
-    <bool name="remove_vgpaper">true</bool>
-    <!-- gamebooster game gunsight -->
-    <bool name="support_game_gunsight">true</bool>
 </features>

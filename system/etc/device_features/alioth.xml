@@ -8,6 +8,8 @@
     <bool name="is_hongmi">false</bool>
     <!--whether the device support alpha optimized-->
     <bool name="support_alpha_optimized">true</bool>
+    <!--whether the device support simple launcher-->
+    <bool name="support_simple_launcher">false</bool>
     <!--whether the device supports torch-->
     <bool name="support_torch">true</bool>
     <!--whether install the fm app-->
@@ -150,6 +152,8 @@
     <bool name="support_camera_hfr">true</bool>
     <!--whether support chroma flash in camera-->
     <bool name="support_chroma_flash">false</bool>
+    <!--whether support Android Flashlight Controller-->
+    <bool name="support_android_flashlight">true</bool>
     <!--whether support object tracking in camera-->
     <bool name="support_object_track">false</bool>
     <!--whether support 4k recording in camera-->
@@ -217,7 +221,7 @@
     <!--whether support main show XiaoAi-->
     <bool name="support_main_xiaoai">true</bool>
     <!--battery capacity typ of the device-->
-    <string name="battery_capacity_typ">4500</string>
+    <string name="battery_capacity_typ">4520</string>
     <!--the vendor feature, it's value may be qcom,mediatek,leadcore or nvidia-->
     <string name="vendor">qcom</string>
     <!--release time for the device, should be an unix timestamp-->
@@ -237,7 +241,7 @@
     <!--whether rotate the final image in camera isp-->
     <bool name="is_camera_isp_rotated">false</bool>
     <!--max cpu freq of the device-->
-    <integer name="cpu_max_freq">284</integer>
+    <integer name="cpu_max_freq">320</integer>
     <!--Successful flag of camera continuous auto focus  result-->
     <integer name="camera_focus_success_flag">2</integer>
     <!--total steps number of camera compensation-->
@@ -259,8 +263,6 @@
         <item>uinput-goodix</item>
     </string-array>
     <bool name="support_tap_fingerprint_sensor_to_home">false</bool>
-    <!-- finger for alipay. default do not need config. -->
-    <string name="finger_alipay_ifaa_model">Xiaomi-cmi</string>
     <!-- type of soter finger pay, config by owner of soter -->
     <integer name="type_soter_finger_pay">2</integer>
     <!-- wheter the device support widevine l1, 1: support, 2: ota_support -->
@@ -305,16 +307,30 @@
         <item>com.phonetest.application.test</item>
         <item>com.ss.android.ugc.aweme</item>
         <item>com.xiaomi.cameratest</item>
+        <item>com.xiaomi.cameratools</item>
         <item>com.blink.academy.protake</item>
+        <item>com.xiaomi.camera.mivi</item>
+        <item>com.xiaomi.camera.sample</item>
+        <item>com.smile.gifmaker</item>
+        <item>com.snapchat.android</item>
     </string-array>
     <!--These app can only access physical camera -->
     <string-array name="camera_hide_logical_package_list">
         <item>com.blink.academy.protake</item>
+        <item>com.xiaomi.camera.mivi</item>
+        <item>com.xiaomi.camera.sample</item>
+        <item>com.smile.gifmaker</item>
+        <item>com.snapchat.android</item>
     </string-array>
     <!--   -->
     <string-array name="camera_adjust_picture_size_cmd_list">
-        <!-- camera id 0 set sensor size 108M, camera id 1 set sensor size 20M -->
-        <item>com.antutu:0, ssize, 12032, 9024;1, ssize, 5184, 3880</item>
+        <!-- camera id 0 set sensor size 48M, camera id 1 set sensor size 20M -->
+        <item>com.ludashi:0, add, 8000, 6000, 33,false</item>
+        <item>com.ludashi:1, add, 5184, 3880, 33,false</item>
+        <!-- camera id 0 set sensor size 48M, camera id 1 set sensor size 20M -->
+        <item>com.antutu:0, ssize, 8000, 6000;1, ssize, 5184, 3880</item>
+        <!-- camera id 1 limit picture-size <= 1920x1080 -->
+        <item>com.tencent.mobileqq:1,limit,1920, 1080</item>
     </string-array>
     <!--still beautify value for 3rd party call-->
     <string name="extra_still_beautify_value">i:2</string>
@@ -341,7 +357,6 @@
         <item>com.android.email</item>
         <item>com.miui.cleanmaster</item>
         <item>com.mi.misupport</item>
-        <item>com.duokan.reader</item>
         <item>com.mfashiongallery.emag</item>
         <item>com.miui.personalassistant</item>
         <item>com.miui.voip</item>
@@ -363,7 +378,6 @@
         <item>/system/data-app/Email/Email.apk</item>
         <item>/system/data-app/CleanMaster/CleanMaster.apk</item>
         <item>/system/data-app/MiSupport/MiSupport.apk</item>
-        <item>/system/data-app/com.duokan.reader/com.duokan.reader.apk</item>
         <item>/system/data-app/MiGalleryLockscreen/MiGalleryLockscreen.apk</item>
         <item>/system/data-app/PersonalAssistant/PersonalAssistant.apk</item>
         <item>/system/data-app/MiuiVoip/MiuiVoip.apk</item>
@@ -431,10 +445,10 @@
     <bool name="support_displayfeature_gamemode">true</bool>
     <!-- whether support fps change -->
     <integer-array name="fpsList">
-        <item>90</item>
+        <item>120</item>
         <item>60</item>
     </integer-array>
-    <integer name="defaultFps">90</integer>
+    <integer name="defaultFps">60</integer>
     <!-- whether support wlan low latency mode -->
     <bool name="support_wifi_low_latency_mode">true</bool>
     <!-- whether support network rps mode -->
@@ -461,7 +475,11 @@
     <!-- whether support hangup while screen turnning off -->
     <bool name="support_hangup_while_screen_off">true</bool>
     <!-- whether support dc backlight -->
-    <bool name="support_dc_backlight">true</bool>
+    <bool name="support_dc_backlight">false</bool>
+    <!-- whether support secret dc backlight -->
+    <bool name="support_secret_dc_backlight">true</bool>
+    <!-- whether support backlight bit switch -->
+    <bool name="support_backlight_bit_switch">true</bool>
     <!-- whether support display expert mode -->
     <bool name="support_display_expert_mode">true</bool>
     <!-- display expert mode color gamut default -->
@@ -506,10 +524,16 @@
     <integer name="expert_gamma_min">170</integer>
     <!-- display expert mode gamma max -->
     <integer name="expert_gamma_max">270</integer>
-    <!-- support video toolbox -->
-    <bool name="is_support_video_tool_box">true</bool>
+    <!-- device head sar value -->
+    <float name="device_head_sar">1.037</float>
+    <!-- device body sar value -->
+    <float name="device_body_sar">0.718</float>
     <!-- whether support video box display effect -->
     <bool name="support_videobox_display_effect">true</bool>
+    <!-- support video toolbox -->
+    <bool name="is_support_video_tool_box">true</bool>
+    <!-- whether support 12bit backlight -->
+    <bool name="support_12bit_backlight">true</bool>
     <!-- gamebooster mi time -->
     <bool name="support_game_mi_time">true</bool>
     <!-- whether support true color -->
@@ -555,21 +579,24 @@
         <item>12</item>
         <item>96</item>
     </integer-array>
-
-    <!-- whether support smart eyecare -->
-    <bool name="support_smart_eyecare">false</bool>
     <!-- whether support paper eyecare-->
     <bool name="support_paper_eyecare">true</bool>
     <!-- default color temp for paper eyecare -->
     <float name="paper_eyecare_default_value">91.0</float>
     <!-- default texture for paper eyecare -->
-    <integer name="paper_eyecare_default_texture">13</integer>
+    <integer name="paper_eyecare_default_texture">18</integer>
     <!-- texture min value for paper eyecare -->
     <integer name="paper_eyecare_min_texture">0</integer>
     <!-- texture max value for paper eyecare -->
-    <integer name="paper_eyecare_max_texture">25</integer>
-    <!-- support mi game countdown -->
-    <bool name="support_mi_game_countdown">true</bool>
+    <integer name="paper_eyecare_max_texture">35</integer>
+    <!-- whether need remove vgpaper-->
+    <bool name="remove_vgpaper">true</bool>
+    <!-- whether support truetone-->
+    <bool name="support_truetone">true</bool>
+    <!-- device support screen enhance engine -->
+    <bool name="support_screen_enhance_engine">true</bool>
+    <!-- is support fingerprint tap-->
+    <bool name="is_support_fingerprint_tap">true</bool>
     <!-- Sunlight mode threshold, 4096 level backlight is 1000, 2047 is 500-->
     <integer name="threashold_sunlight_brightness">1000</integer>
     <!-- whether support Macro Keyboard -->
