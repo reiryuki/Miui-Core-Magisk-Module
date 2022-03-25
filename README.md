@@ -17,7 +17,7 @@
 
 ## Installation Guide
 - Install via Magisk app or Recovery
-- Install any of Miui app Magisk Module which depended with this Miui Core Magisk Module
+- Install any of Miui app Magisk Module bellow
 - Reboot
 
 ## Miui Apps Magisk Modules Available
