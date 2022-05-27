@@ -1,41 +1,49 @@
-(
-
 MODPATH=${0%/*}
 API=`getprop ro.build.version.sdk`
 
-if ! getprop | grep -Eq init.svc.shelld; then
-  shelld &
-  resetprop init.svc.shelld running
-fi
+# debug
+exec 2>$MODPATH/debug.log
+set -x
 
-if ! getprop | grep -Eq init.svc_debug_pid.shelld; then
-  PID=`pidof shelld`
-  resetprop init.svc_debug_pid.shelld $PID
+# function
+run_service() {
+PID=`pidof $FILE`
+if [ ! "$PID" ]; then
+  $FILE &
+  PID=`pidof $FILE`
 fi
+}
 
+# run
+FILE=shelld
+run_service
+
+# wait
 sleep 60
 
+# allow
 PKG=com.miui.system
-if [ "$API" -gt 29 ]; then
+if [ "$API" -ge 30 ]; then
   appops set $PKG AUTO_REVOKE_PERMISSIONS_IF_UNUSED ignore
 fi
 
+# allow
 PKG=com.miui.rom
-if [ "$API" -gt 29 ]; then
+if [ "$API" -ge 30 ]; then
   appops set $PKG AUTO_REVOKE_PERMISSIONS_IF_UNUSED ignore
 fi
 
+# grant
 PKG=com.miui.core
 pm grant $PKG android.permission.READ_PHONE_STATE
-if [ "$API" -gt 29 ]; then
+if [ "$API" -ge 30 ]; then
   appops set $PKG AUTO_REVOKE_PERMISSIONS_IF_UNUSED ignore
 fi
 
+# allow
 PKG=com.xiaomi.micloud.sdk
-if [ "$API" -gt 29 ]; then
+if [ "$API" -ge 30 ]; then
   appops set $PKG AUTO_REVOKE_PERMISSIONS_IF_UNUSED ignore
 fi
-
-) 2>/dev/null
 
 

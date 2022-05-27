@@ -1,14 +1,14 @@
 id=MiuiCore
 name=Miui Core
-version=v3.9
-versionCode=29
+version=v4.1-beta.1
+versionCode=31
 author=Rei Ryuki the Fixer
 description=System core framework library of Miui ROM ported from Xiaomi Mi 9 as a dependency of any Miui apps Magisk modules for any Android 5 and up non-Miui ROM.
 # Source: https://dumps.tadiphone.dev/dumps/xiaomi/cepheus cepheus-user-11-RKQ1.200826.002-V12.5.3.0.RFACNXM-release-keys
 # libmiuiblur.so source: https://github.com/dimasyudhaproject/packages_apps_ANXCamera/blob/f0f7012c045b2b9baa5e36aba3a8319512dfbdd3
-# libshellservice.so source: https://github.com/mcfy49/MIUI-8-a3xeltexx/blob/8f60fbb9cdeca47bffea429c86f4a02d9eecfdb8/out/ZIP/system
+# libshellservice.so source: https://github.com/mcfy49/MIUI-8-a3xeltexx/blob/8f60fbb9cdeca47bffea429c86f4a02d9eecfdb8
 # Android 10 source: https://dumps.tadiphone.dev/dumps/xiaomi/ginkgo ginkgo-user-10-QKQ1.200114.002-V12.0.6.0.QCOEUXM-release-keys
-# libbccQTI.so source: https://github.com/takumi021/vendor_realme_r5x_11/blob/f49c65888b50d856f96ec86d043514f6ac8adb90/proprietary/vendor
-# librs_adreno_sha1.so source: https://github.com/Aknx77/vendor_xiaomi_vince/blob/e864e2f88d4407ebf8ebdde8b79e6fab350a91be/proprietary/vendor
+# libbccQTI.so source: https://github.com/takumi021/vendor_realme_r5x_11/blob/f49c65888b50d856f96ec86d043514f6ac8adb90
+# librs_adreno_sha1.so source: https://github.com/Aknx77/vendor_xiaomi_vince/blob/e864e2f88d4407ebf8ebdde8b79e6fab350a91be
 
 

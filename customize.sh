@@ -1,5 +1,12 @@
 ui_print " "
 
+# magisk
+if [ -d /sbin/.magisk ]; then
+  MAGISKTMP=/sbin/.magisk
+else
+  MAGISKTMP=`find /dev -mindepth 2 -maxdepth 2 -type d -name .magisk`
+fi
+
 # info
 MODVER=`grep_prop version $MODPATH/module.prop`
 MODVERCODE=`grep_prop versionCode $MODPATH/module.prop`
@@ -44,13 +51,6 @@ if [ -f $FILE ] && ! getprop | grep -Eq "sepolicy.sh\]: \[1"; then
   sed -i 's/"//g' $DES
 fi
 
-# magisk
-if [ -d /sbin/.magisk ]; then
-  MAGISKTMP=/sbin/.magisk
-else
-  MAGISKTMP=`find /dev -mindepth 2 -maxdepth 2 -type d -name .magisk`
-fi
-
 # function
 NAME=_ZN7android23sp_report_stack_pointerEv
 FILE=/system/lib*/libandroid_runtime.so
@@ -64,7 +64,7 @@ ui_print " "
 
 # extract
 APP=miuisystem
-ui_print "- Extracting $APP.apk folder..."
+ui_print "- Extracting..."
 FILE=`find $MODPATH/system -type f -name $APP.apk`
 DIR=$MODPATH/system/etc
 DES=assets/*
@@ -87,7 +87,6 @@ fi
 for APPS in $APP; do
   rm -f `find /data/dalvik-cache /data/resource-cache -type f -name *$APPS*.apk`
 done
-rm -f $MODPATH/LICENSE
 rm -rf /metadata/magisk/$MODID
 rm -rf /mnt/vendor/persist/magisk/$MODID
 rm -rf /persist/magisk/$MODID
@@ -242,16 +241,6 @@ NAME=`ls $MODPATH/system/bin`
 file_check_bin
 NAME=`ls $MODPATH/system/lib`
 file_check_system
-NAME="libarcsoft_beautyshot.so libmpbase.so libc++_shared.so"
-if getprop | grep -Eq "miui.camlib\]: \[1"; then
-  ui_print "- Using camera libs"
-  file_check_vendor
-  ui_print " "
-else
-  for NAMES in $NAME; do
-    rm -f `find $MODPATH/system -type f -name $NAMES`
-  done
-fi
 NAME="librs_adreno_sha1.so libbccQTI.so"
 if [ "$BOOTMODE" == true ]; then
   DES=$MAGISKTMP/mirror/vendor/lib*/lib*_adreno.so
@@ -259,10 +248,17 @@ else
   DES=/vendor/lib*/lib*_adreno.so
 fi
 file_check_vendor_grep
+NAME=libllvm-qcom.so
+if [ "$BOOTMODE" == true ]; then
+  DES=$MAGISKTMP/mirror/vendor/lib*/libCB.so
+else
+  DES=/vendor/lib*/libCB.so
+fi
+file_check_vendor_grep
 
 # public
 if getprop | grep -Eq "miui.public\]: \[1"; then
-  ui_print "- Using public.libraries.txt patch"
+  ui_print "- Using /system/etc/public.libraries.txt patch"
   sed -i 's/#p//g' $MODPATH/post-fs-data.sh
   ui_print " "
 fi
@@ -278,12 +274,15 @@ for DIRS in $DIR; do
   chown 0.2000 $DIRS
 done
 if [ "$API" -ge 26 ]; then
-  magiskpolicy "dontaudit { system_lib_file vendor_file vendor_configs_file } labeledfs filesystem associate"
-  magiskpolicy "allow     { system_lib_file vendor_file vendor_configs_file } labeledfs filesystem associate"
-  magiskpolicy "dontaudit init { system_lib_file vendor_file vendor_configs_file } dir relabelfrom"
-  magiskpolicy "allow     init { system_lib_file vendor_file vendor_configs_file } dir relabelfrom"
-  magiskpolicy "dontaudit init { system_lib_file vendor_file vendor_configs_file } file relabelfrom"
-  magiskpolicy "allow     init { system_lib_file vendor_file vendor_configs_file } file relabelfrom"
+  magiskpolicy --live "type system_lib_file"
+  magiskpolicy --live "type vendor_file"
+  magiskpolicy --live "type vendor_configs_file"
+  magiskpolicy --live "dontaudit { system_lib_file vendor_file vendor_configs_file } labeledfs filesystem associate"
+  magiskpolicy --live "allow     { system_lib_file vendor_file vendor_configs_file } labeledfs filesystem associate"
+  magiskpolicy --live "dontaudit init { system_lib_file vendor_file vendor_configs_file } dir relabelfrom"
+  magiskpolicy --live "allow     init { system_lib_file vendor_file vendor_configs_file } dir relabelfrom"
+  magiskpolicy --live "dontaudit init { system_lib_file vendor_file vendor_configs_file } file relabelfrom"
+  magiskpolicy --live "allow     init { system_lib_file vendor_file vendor_configs_file } file relabelfrom"
   chcon -R u:object_r:system_lib_file:s0 $MODPATH/system/lib*
   chcon -R u:object_r:vendor_file:s0 $MODPATH/system/vendor
   chcon -R u:object_r:vendor_configs_file:s0 $MODPATH/system/vendor/etc
