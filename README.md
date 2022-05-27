@@ -2,6 +2,7 @@
 
 ## Descriptions
 - System core framework library of Miui ROM as a dependency of any Miui apps (non-Play Store version) Magisk modules.
+- Sources: https://github.com/reiryuki/Miui-Core-Magisk-Module/blob/main/module.prop
 - For Magisk module developers, your Miui app must declare these lines after `<application />` in the AndroidManifest.xml if you want to load classes from this Miui Core: (Do not do this if your app have it's own classes!)
 
   `<uses-library android:name="com.miui.system" android:required="false" />`
