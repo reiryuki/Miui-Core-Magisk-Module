@@ -31,6 +31,7 @@
 - CrDroid ROM Android 10
 - DotOS ROM Android 11
 - Ancient OS ROM Android 12
+- Nusantara ROM Android 12L
 
 ## Troubleshootings & Optionals
 - Following on the Miui Apps Magisk Modules above
