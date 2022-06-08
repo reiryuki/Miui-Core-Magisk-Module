@@ -84,9 +84,6 @@ if [ "$BOOTMODE" == true ]; then
     RES=`pm uninstall $PKGS`
   done
 fi
-for APPS in $APP; do
-  rm -f `find /data/dalvik-cache /data/resource-cache -type f -name *$APPS*.apk`
-done
 rm -rf /metadata/magisk/$MODID
 rm -rf /mnt/vendor/persist/magisk/$MODID
 rm -rf /persist/magisk/$MODID
@@ -274,15 +271,6 @@ for DIRS in $DIR; do
   chown 0.2000 $DIRS
 done
 if [ "$API" -ge 26 ]; then
-  magiskpolicy --live "type system_lib_file"
-  magiskpolicy --live "type vendor_file"
-  magiskpolicy --live "type vendor_configs_file"
-  magiskpolicy --live "dontaudit { system_lib_file vendor_file vendor_configs_file } labeledfs filesystem associate"
-  magiskpolicy --live "allow     { system_lib_file vendor_file vendor_configs_file } labeledfs filesystem associate"
-  magiskpolicy --live "dontaudit init { system_lib_file vendor_file vendor_configs_file } dir relabelfrom"
-  magiskpolicy --live "allow     init { system_lib_file vendor_file vendor_configs_file } dir relabelfrom"
-  magiskpolicy --live "dontaudit init { system_lib_file vendor_file vendor_configs_file } file relabelfrom"
-  magiskpolicy --live "allow     init { system_lib_file vendor_file vendor_configs_file } file relabelfrom"
   chcon -R u:object_r:system_lib_file:s0 $MODPATH/system/lib*
   chcon -R u:object_r:vendor_file:s0 $MODPATH/system/vendor
   chcon -R u:object_r:vendor_configs_file:s0 $MODPATH/system/vendor/etc
