@@ -48,6 +48,7 @@
 ## Thanks for Donations
 - https://t.me/androidryukimodsdiscussions/2619
 - https://www.paypal.me/reiryuki
+- ko-fi.com/reiryuki
 
 ## Download
 - Tap here > https://www.pling.com/p/1537512/
