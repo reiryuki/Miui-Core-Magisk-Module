@@ -7,6 +7,9 @@ else
   MAGISKTMP=`find /dev -mindepth 2 -maxdepth 2 -type d -name .magisk`
 fi
 
+# optionals
+OPTIONALS=/sdcard/optionals.prop
+
 # info
 MODVER=`grep_prop version $MODPATH/module.prop`
 MODVERCODE=`grep_prop versionCode $MODPATH/module.prop`
@@ -45,7 +48,7 @@ if [ "$BOOTMODE" != true ]; then
 fi
 FILE=$MODPATH/sepolicy.sh
 DES=$MODPATH/sepolicy.rule
-if [ -f $FILE ] && ! getprop | grep -Eq "sepolicy.sh\]: \[1"; then
+if [ -f $FILE ] && [ "`grep_prop sepolicy.sh $OPTIONALS`" != 1 ]; then
   mv -f $FILE $DES
   sed -i 's/magiskpolicy --live "//g' $DES
   sed -i 's/"//g' $DES
@@ -74,7 +77,6 @@ ui_print " "
 
 # cleaning
 ui_print "- Cleaning..."
-APP="`ls $MODPATH/system/priv-app` `ls $MODPATH/system/app` framework-ext-res"
 PKG="com.miui.rom
      com.miui.core
      com.miui.system
@@ -92,9 +94,8 @@ rm -rf /cache/magisk/$MODID
 ui_print " "
 
 # power save
-PROP=`getprop power.save`
 FILE=$MODPATH/system/etc/sysconfig/*
-if [ "$PROP" == 1 ]; then
+if [ "`grep_prop power.save $OPTIONALS`" == 1 ]; then
   ui_print "- $MODNAME will not be allowed in power save."
   ui_print "  It may save your battery but decreasing $MODNAME performance."
   for PKGS in $PKG; do
@@ -141,6 +142,8 @@ done
 }
 
 # hide
+APP="`ls $MODPATH/system/priv-app`
+     `ls $MODPATH/system/app` framework-ext-res"
 hide_oat
 
 # function
@@ -254,7 +257,7 @@ fi
 file_check_vendor_grep
 
 # public
-if getprop | grep -Eq "miui.public\]: \[1"; then
+if [ "`grep_prop miui.public $OPTIONALS`" == 1 ]; then
   ui_print "- Using /system/etc/public.libraries.txt patch"
   sed -i 's/#p//g' $MODPATH/post-fs-data.sh
   ui_print " "
