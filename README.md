@@ -27,6 +27,7 @@
 - https://github.com/reiryuki/Miui-Screen-Recorder-Magisk-Module
 - https://github.com/reiryuki/Miui-Security-Center-Magisk-Module
 - https://github.com/reiryuki/Miui-Home-Magisk-Module
+- https://github.com/reiryuki/Miui-Clock-Magisk-Module
 
 ## Tested on
 - CrDroid ROM Android 10
