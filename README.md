@@ -7,9 +7,9 @@
 
   `<uses-library android:name="com.miui.system" android:required="false" />`
 
-  `<uses-library android:name="com.miui.core" android:required="false" />`
-
   `<uses-library android:name="com.miui.rom" android:required="false" />`
+
+  `<uses-library android:name="com.miui.core" android:required="false" />`
 
 ## Requirements
 - NOT in Miui ROM
