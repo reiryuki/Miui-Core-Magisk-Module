@@ -3,6 +3,3 @@
     <library name="protobuf.jar"
         file="/system/framework/protobuf.jar"/>
 </permissions>
-
-
-

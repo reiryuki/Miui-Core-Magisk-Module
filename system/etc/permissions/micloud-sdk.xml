@@ -4,5 +4,3 @@
         file="/system/priv-app/RtMiCloudSDK/RtMiCloudSDK.apk"
         dependency="com.miui.system"/>
 </permissions>
-
-

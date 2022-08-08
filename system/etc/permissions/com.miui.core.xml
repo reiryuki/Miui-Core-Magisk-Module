@@ -3,4 +3,3 @@
     <library name="com.miui.core"
         file="/system/priv-app/miui/miui.apk"/>
 </permissions>
-

@@ -4,6 +4,3 @@
         file="/system/framework/cloud-common-runtime.jar"
         dependency="org.apache.http.legacy"/>
 </permissions>
-
-
-

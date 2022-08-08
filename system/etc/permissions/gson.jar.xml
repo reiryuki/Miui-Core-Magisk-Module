@@ -3,5 +3,3 @@
     <library name="gson.jar"
         file="/system/framework/gson.jar"/>
 </permissions>
-
-
