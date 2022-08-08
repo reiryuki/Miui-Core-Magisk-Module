@@ -3,6 +3,3 @@
     <hidden-api-whitelisted-app package="com.miui.core"/>
     <allow-in-power-save package="com.miui.core"/>
 </config>
-
-
-

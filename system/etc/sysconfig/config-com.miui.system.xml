@@ -2,6 +2,3 @@
 <config>
     <hidden-api-whitelisted-app package="com.miui.system"/>
 </config>
-
-
-
