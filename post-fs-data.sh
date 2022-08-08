@@ -12,6 +12,13 @@ if [ -f $FILE ]; then
   sh $FILE
 fi
 
+# context
+if [ "$API" -ge 26 ]; then
+  chcon -R u:object_r:system_lib_file:s0 $MODPATH/system/lib*
+  chcon -R u:object_r:vendor_file:s0 $MODPATH/system/vendor
+  chcon -R u:object_r:vendor_configs_file:s0 $MODPATH/system/vendor/etc
+fi
+
 # property
 PROP=`getprop ro.build.characteristics`
 if [ ! "$PROP" ]; then

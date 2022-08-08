@@ -273,11 +273,6 @@ DIR=`find $MODPATH/system/vendor -type d`
 for DIRS in $DIR; do
   chown 0.2000 $DIRS
 done
-if [ "$API" -ge 26 ]; then
-  chcon -R u:object_r:system_lib_file:s0 $MODPATH/system/lib*
-  chcon -R u:object_r:vendor_file:s0 $MODPATH/system/vendor
-  chcon -R u:object_r:vendor_configs_file:s0 $MODPATH/system/vendor/etc
-fi
 ui_print " "
 
 
