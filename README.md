@@ -1,7 +1,7 @@
 # Miui Core Magisk Module
 
 ## Descriptions
-- System core framework library of Miui ROM as a dependency of any Miui apps (non-Play Store version) Magisk modules.
+- System core framework library of Miui ROM as a dependency of any ported Miui apps (non-Play Store version) Magisk modules.
 - Sources: https://github.com/reiryuki/Miui-Core-Magisk-Module/blob/main/module.prop
 - For Magisk module developers, your Miui app must declare these lines after `<application />` in the AndroidManifest.xml if you want to load classes from this Miui Core: (Do not do this if your app have it's own classes!)
 
@@ -18,7 +18,7 @@
 
 ## Installation Guide
 - Install via Magisk app or Recovery
-- Install any of Miui app Magisk Module bellow
+- Install any Miui app Magisk Module bellow
 - Reboot
 
 ## Miui Apps Magisk Modules Available
