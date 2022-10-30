@@ -9,7 +9,7 @@ set -x
 # run
 FILE=$MODPATH/sepolicy.sh
 if [ -f $FILE ]; then
-  sh $FILE
+  . $FILE
 fi
 
 # context
@@ -34,20 +34,21 @@ if [ "$DEVICE" == cancro ]; then
   fi
 fi
 
-# etc
+# magisk
 if [ -d /sbin/.magisk ]; then
   MAGISKTMP=/sbin/.magisk
 else
-  MAGISKTMP=`find /dev -mindepth 2 -maxdepth 2 -type d -name .magisk`
+  MAGISKTMP=`realpath /dev/*/.magisk`
 fi
-ETC=$MAGISKTMP/mirror/system/etc
-VETC=$MAGISKTMP/mirror/system/vendor/etc
+
+# path
+MIRROR=$MAGISKTMP/mirror
+SYSTEM=`realpath $MIRROR/system`
+VENDOR=`realpath $MIRROR/vendor`
+ETC=$SYSTEM/etc
+VETC=$VENDOR/etc
 MODETC=$MODPATH/system/etc
 MODVETC=$MODPATH/system/vendor/etc
-
-# cleaning
-DES=public.libraries.txt
-rm -f `find $MODPATH/system -type f -name $DES`
 
 # function
 patch_public_libraries() {
@@ -60,31 +61,30 @@ chmod 0644 $FILE
 }
 
 # patch public libraries
-NAME="libnativehelper.so
-      libcutils.so
-      libutils.so
-      libc++.so
-      libandroidfw.so
-      libui.so
-      libandroid_runtime.so
-      libbinder.so"
+DES=public.libraries.txt
+rm -f `find $MODPATH/system -type f -name $DES`
+NAME="libnativehelper.so libnativeloader.so libcutils.so
+      libutils.so libc++.so libandroidfw.so libui.so
+      libandroid_runtime.so libbinder.so"
 FILE=$MODETC/$DES
-#pcp -f $ETC/$DES $MODETC
-#ppatch_public_libraries
-
-# patch public libraries
-NAME=libOpenCL.so
+cp -f $ETC/$DES $MODETC
+patch_public_libraries
+NAME="libadsprpc.so libcdsprpc.so libOpenCL.so
+      libarcsoft_beautyshot.so libmpbase.so"
 FILE=$MODVETC/$DES
 cp -f $VETC/$DES $MODVETC
 patch_public_libraries
 if [ "$API" -ge 26 ]; then
   chcon u:object_r:vendor_configs_file:s0 $FILE
+  for NAMES in $NAME; do
+    chcon u:object_r:same_process_hal_file:s0 $MODPATH/system/vendor/lib*/$NAMES
+  done
 fi
 
 # cleaning
 FILE=$MODPATH/cleaner.sh
 if [ -f $FILE ]; then
-  sh $FILE
+  . $FILE
   rm -f $FILE
 fi
 

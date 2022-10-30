@@ -1,6 +1,6 @@
 mount -o rw,remount /data
 MODPATH=${0%/*}
-MODID=`echo "$MODPATH" | sed -n -e 's/\/data\/adb\/modules\///p'`
+MODID=`echo "$MODPATH" | sed 's|/data/adb/modules/||'`
 APP="`ls $MODPATH/system/priv-app` `ls $MODPATH/system/app` framework-ext-res"
 PKG="com.miui.rom
      com.miui.core
