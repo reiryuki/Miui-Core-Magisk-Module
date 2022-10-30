@@ -25,7 +25,7 @@
 - Magisk installed
 
 ## Installation Guide & Download Link
-- Install this modue https://www.pling.com/p/1537512/ via Magisk app or recovery
+- Install this module https://www.pling.com/p/1537512/ via Magisk app or recovery
 - Install any Miui app Magisk Module bellow
 - Reboot
 
