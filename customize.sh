@@ -118,6 +118,7 @@ if [ "$BOOTMODE" == true ]; then
     RES=`pm uninstall $PKGS`
   done
 fi
+rm -rf $MODPATH/unused
 rm -rf /metadata/magisk/$MODID
 rm -rf /mnt/vendor/persist/magisk/$MODID
 rm -rf /persist/magisk/$MODID
