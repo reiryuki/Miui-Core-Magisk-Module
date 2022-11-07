@@ -70,7 +70,9 @@ FILE=$MODETC/$DES
 cp -f $ETC/$DES $MODETC
 patch_public_libraries
 NAME="libadsprpc.so libcdsprpc.so libOpenCL.so
-      libarcsoft_beautyshot.so libmpbase.so"
+      libarcsoft_beautyshot.so libmpbase.so libmiuinative.so
+      libmiuiblur.so libthemeutils_jni.so libshell_jni.so libshell.so
+      libmiuixlog.so libimage_arcsoft_4plus.so libstlport_shared.so"
 FILE=$MODVETC/$DES
 cp -f $VETC/$DES $MODVETC
 patch_public_libraries

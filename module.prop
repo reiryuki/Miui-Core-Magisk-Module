@@ -1,7 +1,7 @@
 id=MiuiCore
 name=Miui Core
-version=v4.4
-versionCode=34
+version=v4.5
+versionCode=35
 author=Rei Ryuki the Fixer
 description=System core framework library of Miui ROM ported from Xiaomi Mi 9 as a dependency of any Miui apps Magisk modules for any Android 5 and up non-Miui ROM.
 

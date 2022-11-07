@@ -220,6 +220,19 @@ APP="`ls $MODPATH/system/priv-app`
      `ls $MODPATH/system/app` framework-ext-res"
 hide_oat
 
+# move
+if [ "`grep_prop miui.public $OPTIONALS`" == 1 ]; then
+  ui_print "- Using vendor public libraries method..."
+  NAME="libmiuinative.so libmiuiblur.so libthemeutils_jni.so
+        libshell_jni.so libshell.so libmiuixlog.so
+        libimage_arcsoft_4plus.so libstlport_shared.so"
+  for NAMES in $NAME; do
+    mv -f $MODPATH/system/lib/$NAMES $MODPATH/system/vendor/lib
+    mv -f $MODPATH/system/lib64/$NAMES $MODPATH/system/vendor/lib64
+  done
+  ui_print " "
+fi
+
 # function
 file_check_bin() {
 for NAMES in $NAME; do
