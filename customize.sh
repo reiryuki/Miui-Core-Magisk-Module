@@ -143,7 +143,7 @@ conflict() {
 for NAMES in $NAME; do
   DIR=/data/adb/modules_update/$NAMES
   if [ -f $DIR/uninstall.sh ]; then
-    . $DIR/uninstall.sh
+    sh $DIR/uninstall.sh
   fi
   rm -rf $DIR
   DIR=/data/adb/modules/$NAMES
@@ -151,7 +151,7 @@ for NAMES in $NAME; do
   touch $DIR/remove
   FILE=/data/adb/modules/$NAMES/uninstall.sh
   if [ -f $FILE ]; then
-    . $FILE
+    sh $FILE
     rm -f $FILE
   fi
   rm -rf /metadata/magisk/$NAMES
@@ -221,8 +221,8 @@ APP="`ls $MODPATH/system/priv-app`
 hide_oat
 
 # move
-if [ "`grep_prop miui.public $OPTIONALS`" == 1 ]; then
-  ui_print "- Using vendor public libraries method..."
+if [ "`grep_prop miui.public $OPTIONALS`" != 0 ]; then
+  ui_print "- Using vendor public libraries method"
   NAME="libmiuinative.so libmiuiblur.so libthemeutils_jni.so
         libshell_jni.so libshell.so libmiuixlog.so
         libimage_arcsoft_4plus.so libstlport_shared.so"
