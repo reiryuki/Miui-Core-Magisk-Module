@@ -19,9 +19,17 @@ fi
 SYSTEM=`realpath $MIRROR/system`
 PRODUCT=`realpath $MIRROR/product`
 VENDOR=`realpath $MIRROR/vendor`
-SYSTEM_EXT=`realpath $MIRROR/system/system_ext`
-ODM=`realpath /odm`
-MY_PRODUCT=`realpath /my_product`
+SYSTEM_EXT=`realpath $MIRROR/system_ext`
+if [ -d $MIRROR/odm ]; then
+  ODM=`realpath $MIRROR/odm`
+else
+  ODM=`realpath /odm`
+fi
+if [ -d $MIRROR/my_product ]; then
+  MY_PRODUCT=`realpath $MIRROR/my_product`
+else
+  MY_PRODUCT=`realpath /my_product`
+fi
 
 # optionals
 OPTIONALS=/sdcard/optionals.prop
@@ -76,22 +84,20 @@ fi
 
 # function
 NAME=_ZN7android23sp_report_stack_pointerEv
+FILE=$SYSTEM/lib/libandroid_runtime.so
+FILE2=$SYSTEM/lib64/libandroid_runtime.so
 if [ "$IS64BIT" == true ]; then
-  FILE=$SYSTEM/lib64/libandroid_runtime.so
-  FILE2=$SYSTEM/lib/libandroid_runtime.so
   ui_print "- Checking $NAME function..."
-  if ! grep -Eq $NAME $FILE || ! grep -Eq $NAME $FILE2; then
+  if ! grep -Eq $NAME $FILE\
+  || ! grep -Eq $NAME $FILE2; then
     ui_print "  Using legacy libraries"
     cp -rf $MODPATH/system_10/* $MODPATH/system
-    rm -f $MODPATH/system/vendor/lib*/vendor.qti.hardware.dsp@1.0.so
   fi
 else
-  FILE=$SYSTEM/lib/libandroid_runtime.so
   ui_print "- Checking $NAME function..."
   if ! grep -Eq $NAME $FILE; then
     ui_print "  Using legacy libraries"
     cp -rf $MODPATH/system_10/* $MODPATH/system
-    rm -f $MODPATH/system/vendor/lib*/vendor.qti.hardware.dsp@1.0.so
   fi
 fi
 rm -rf $MODPATH/system_10
@@ -230,6 +236,14 @@ if [ "`grep_prop miui.public $OPTIONALS`" != 0 ]; then
     mv -f $MODPATH/system/lib/$NAMES $MODPATH/system/vendor/lib
     mv -f $MODPATH/system/lib64/$NAMES $MODPATH/system/vendor/lib64
   done
+  cp -f $MODPATH/system/vendor/lib/libshell_jni.so $MODPATH/system/lib/modshell_jni.so
+  cp -f $MODPATH/system/vendor/lib64/libshell_jni.so $MODPATH/system/lib64/modshell_jni.so
+  FILE="$MODPATH/system/bin/shelld
+        $MODPATH/system/lib*/modshell_jni.so"
+  sed -i 's/libshell_jni.so/modshell_jni.so/g' $FILE
+  cp -f $MODPATH/system/vendor/lib/libshell.so $MODPATH/system/lib/modshell.so
+  cp -f $MODPATH/system/vendor/lib64/libshell.so $MODPATH/system/lib64/modshell.so
+  sed -i 's/libshell.so/modshell.so/g' $MODPATH/system/lib*/*shell*.so
   ui_print " "
 fi
 
@@ -238,10 +252,12 @@ file_check_bin() {
 for NAMES in $NAME; do
   FILE=`realpath $SYSTEM/*bin/$NAMES`
   FILE2=`realpath $SYSTEM_EXT/*bin/$NAMES`
-  if [ "$FILE" ] || [ "$FILE2" ]; then
+  FILE3=`realpath $VENDOR/*bin/$NAMES`
+  if [ "$FILE" ] || [ "$FILE2" ] || [ "$FILE3" ]; then
     ui_print "- Detected $NAMES"
     ui_print " "
     rm -f $MODPATH/system/bin/$NAMES
+    rm -f $MODPATH/system/vendor/bin/$NAMES
   fi
 done
 }
@@ -319,7 +335,7 @@ done
 }
 
 # check
-NAME=`ls $MODPATH/system/bin`
+NAME=shelld
 file_check_bin
 NAME=`ls $MODPATH/system/lib`
 file_check_system
@@ -328,14 +344,23 @@ file_check_vendor
 
 # permission
 ui_print "- Setting permission..."
-DIR=$MODPATH/system/*bin
-chmod 0751 $DIR
-chmod 0755 $DIR/*
+FILE=`find $MODPATH/system/bin\
+           $MODPATH/system/vendor/bin -type f`
+for FILES in $FILE; do
+  chmod 0755 $FILES
+done
+chmod 0751 $MODPATH/system/bin
+chmod 0751 $MODPATH/system/vendor/bin
 if [ "$API" -ge 26 ]; then
-  chown -R 0.2000 $DIR
-  DIR=`find $MODPATH/system/vendor -type d`
+  DIR=`find $MODPATH/system/bin\
+            $MODPATH/system/vendor -type d`
   for DIRS in $DIR; do
     chown 0.2000 $DIRS
+  done
+  FILE=`find $MODPATH/system/bin\
+             $MODPATH/system/vendor/bin -type f`
+  for FILES in $FILE; do
+    chown 0.2000 $FILES
   done
 fi
 ui_print " "

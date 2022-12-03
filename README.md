@@ -16,12 +16,13 @@
 
 ## Sources
 - https://dumps.tadiphone.dev/dumps/xiaomi/cepheus cepheus-user-11-RKQ1.200826.002-V12.5.3.0.RFACNXM-release-keys
+- https://dumps.tadiphone.dev/dumps/redmi/alioth qssi-user-12-SKQ1.211006.001-22.1.19-release-keys
 - libmiuiblur.so: https://github.com/dimasyudhaproject/packages_apps_ANXCamera
 - libshellservice.so: https://github.com/mcfy49/MIUI-8-a3xeltexx
 - system_10: https://dumps.tadiphone.dev/dumps/xiaomi/ginkgo ginkgo-user-10-QKQ1.200114.002-V12.0.6.0.QCOEUXM-release-keys
 - libbccQTI.so: https://github.com/takumi021/vendor_realme_r5x
 - librs_adreno_sha1.so: https://github.com/Aknx77/vendor_xiaomi_vince
-- libmiui_runtime.so: https://dumps.tadiphone.dev/dumps/redmi/alioth qssi-user-12-SKQ1.211230.001-22.2.23-release-keys
+- libmiui_runtime.so: https://dumps.tadiphone.dev/dumps/redmi/alioth qssi-user-12-SKQ1.211006.001-22.1.19-release-keys
 
 ## Requirements
 - NOT in Miui ROM
@@ -35,7 +36,7 @@
 
 ## Miui Apps Magisk Modules Available
 - https://github.com/reiryuki/Mi-Music-Magisk-Module
-- https://github.com/reiryuki/Mi-Sound-Redmi-M2012K11AC-Magisk-Module
+- https://github.com/reiryuki/Mi-Sound-Redmi-K40-Magisk-Module
 - https://github.com/reiryuki/Miui-Gallery-Magisk-Module
 - https://github.com/reiryuki/Miui-Screen-Recorder-Magisk-Module
 - https://github.com/reiryuki/Miui-Security-Center-Magisk-Module
