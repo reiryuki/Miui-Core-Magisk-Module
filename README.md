@@ -5,8 +5,8 @@
 - The MIT license specified here is for the Magisk Module, not for Miui apps and blobs.
 
 ## Descriptions
-- System core framework library of Miui ROM as a dependency of any ported Miui apps (non-Play Store version) Magisk modules.
-- For Magisk module developers, your Miui app must declare these lines after `<application />` in the AndroidManifest.xml if you want to load classes from this Miui Core: (Do not do this if your app have it's own library!)
+- System core framework library of Miui ROM ported from Xiaomi Mi 9 (cepheus) as a dependency of any Miui app and Miui Magisk Module.
+- For Miui apps porter, your app must declare these lines after `<application />` in the AndroidManifest.xml if you want to load classes from this Miui Core: (Do not do this if your app have it's own library!)
 
   `<uses-library android:name="com.miui.system" android:required="false" />`
 
@@ -23,6 +23,7 @@
 - libbccQTI.so: https://github.com/takumi021/vendor_realme_r5x
 - librs_adreno_sha1.so: https://github.com/Aknx77/vendor_xiaomi_vince
 - libmiui_runtime.so: https://dumps.tadiphone.dev/dumps/redmi/alioth qssi-user-12-SKQ1.211006.001-22.1.19-release-keys
+- yellowpage-common.jar: https://github.com/respkirya/Miui-v6
 
 ## Requirements
 - NOT in Miui ROM
@@ -34,7 +35,7 @@
 - Install any Miui app Magisk Module bellow
 - Reboot
 
-## Miui Apps Magisk Modules Available
+## Miui Magisk Modules Available
 - https://github.com/reiryuki/Mi-Music-Magisk-Module
 - https://github.com/reiryuki/Mi-Sound-Redmi-K40-Magisk-Module
 - https://github.com/reiryuki/Miui-Gallery-Magisk-Module
