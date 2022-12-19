@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<permissions>
-    <library name="protobuf.jar"
-        file="/system/framework/protobuf.jar"/>
-</permissions>
