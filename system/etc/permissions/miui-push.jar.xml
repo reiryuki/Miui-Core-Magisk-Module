@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<permissions>
-    <library name="miui-push.jar"
-        file="/system/framework/miuipushsdkshared.jar"/>
-</permissions>
