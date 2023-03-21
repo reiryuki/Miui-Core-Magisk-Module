@@ -1,0 +1,35 @@
+# debug
+dontaudit system_server system_file file write
+allow     system_server system_file file write
+
+# context
+create { system_lib_file vendor_file vendor_configs_file same_process_hal_file }
+dontaudit { system_file system_lib_file vendor_file vendor_configs_file same_process_hal_file } labeledfs filesystem associate
+allow     { system_file system_lib_file vendor_file vendor_configs_file same_process_hal_file } labeledfs filesystem associate
+dontaudit init { system_file system_lib_file vendor_file vendor_configs_file } { dir file } relabelfrom
+allow     init { system_file system_lib_file vendor_file vendor_configs_file } { dir file } relabelfrom
+dontaudit init same_process_hal_file file relabelfrom
+allow     init same_process_hal_file file relabelfrom
+
+# file
+dontaudit { system_app priv_app platform_app untrusted_app_29 untrusted_app_27 untrusted_app } { vendor_audio_prop vendor_display_prop } file { read open getattr map }
+allow     { system_app priv_app platform_app untrusted_app_29 untrusted_app_27 untrusted_app } { vendor_audio_prop vendor_display_prop } file { read open getattr map }
+dontaudit { system_app priv_app platform_app untrusted_app_29 untrusted_app_27 untrusted_app } vendor_displayfeature_prop file read
+allow     { system_app priv_app platform_app untrusted_app_29 untrusted_app_27 untrusted_app } vendor_displayfeature_prop file read
+dontaudit { system_app priv_app platform_app untrusted_app_29 untrusted_app_27 untrusted_app } cgroup file write
+allow     { system_app priv_app platform_app untrusted_app_29 untrusted_app_27 untrusted_app } cgroup file write
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

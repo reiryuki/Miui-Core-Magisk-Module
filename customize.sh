@@ -1,7 +1,5 @@
 # space
-if [ "$BOOTMODE" == true ]; then
-  ui_print " "
-fi
+ui_print " "
 
 # magisk
 if [ -d /sbin/.magisk ]; then
@@ -76,36 +74,55 @@ if [ "$BOOTMODE" != true ]; then
   mount -o rw -t auto /dev/block/bootdevice/by-name/metadata /metadata
 fi
 
-# sepolicy.rule
-FILE=$MODPATH/sepolicy.sh
-DES=$MODPATH/sepolicy.rule
-if [ "`grep_prop sepolicy.sh $OPTIONALS`" != 1 ]\
+# sepolicy
+FILE=$MODPATH/sepolicy.rule
+DES=$MODPATH/sepolicy.pfsd
+if [ "`grep_prop sepolicy.sh $OPTIONALS`" == 1 ]\
 && [ -f $FILE ]; then
   mv -f $FILE $DES
-  sed -i 's/magiskpolicy --live "//g' $DES
-  sed -i 's/"//g' $DES
 fi
 
 # function
+check_function() {
+ui_print "- Checking"
+ui_print "$NAME"
+ui_print "  function at"
+ui_print "$FILE"
+ui_print "  Please wait..."
+if ! grep -Eq $NAME $FILE; then
+  ui_print "  Using legacy libraries"
+  cp -rf $MODPATH/system_10/* $MODPATH/system
+fi
+ui_print " "
+}
+
+# check
 NAME=_ZN7android23sp_report_stack_pointerEv
-FILE=$SYSTEM/lib/libandroid_runtime.so
-FILE2=$SYSTEM/lib64/libandroid_runtime.so
+TARGET="$MODPATH/system/bin/shelld
+        $MODPATH/system/lib/libexmedia.so
+        $MODPATH/system/lib/libmiuiblur.so
+        $MODPATH/system/lib/libshell.so
+        $MODPATH/system/vendor/lib/libcdsprpc.so"
+LISTS=`strings $TARGET | grep ^lib | grep .so\
+       | sed 's/libshellservice.so//' | sed 's/libshell_jni.so//'\
+       | sed 's/libexmedia.so//' | sed 's/libmiuiblur.so//'\
+       | sed 's/libshell.so//' | sed 's/libcdsprpc.so//'\
+       | sed 's/lib%s_skel.so//'`
+FILE=`for LIST in $LISTS; do echo $SYSTEM/lib/$LIST; done`
+check_function
 if [ "$IS64BIT" == true ]; then
-  ui_print "- Checking $NAME function..."
-  if ! grep -Eq $NAME $FILE\
-  || ! grep -Eq $NAME $FILE2; then
-    ui_print "  Using legacy libraries"
-    cp -rf $MODPATH/system_10/* $MODPATH/system
-  fi
-else
-  ui_print "- Checking $NAME function..."
-  if ! grep -Eq $NAME $FILE; then
-    ui_print "  Using legacy libraries"
-    cp -rf $MODPATH/system_10/* $MODPATH/system
-  fi
+  TARGET="$MODPATH/system/lib64/libexmedia.so
+          $MODPATH/system/lib64/libmiuiblur.so
+          $MODPATH/system/lib64/libshell.so
+          $MODPATH/system/vendor/lib64/libcdsprpc.so"
+  LISTS=`strings $TARGET | grep ^lib | grep .so\
+         | sed 's/libexmedia.so//' | sed 's/libmiuiblur.so//'\
+         | sed 's/libshell.so//' | sed 's/libcdsprpc.so//'\
+         | sed 's/lib%s_skel.so//'`
+  FILE=`for LIST in $LISTS; do echo $SYSTEM/lib64/$LIST; done`
+  check_function
 fi
 rm -rf $MODPATH/system_10
-ui_print " "
 
 # extract
 APP=miuisystem
@@ -119,13 +136,10 @@ ui_print " "
 
 # cleaning
 ui_print "- Cleaning..."
-PKG="com.miui.rom
-     com.miui.core
-     com.miui.system
-     com.xiaomi.micloud.sdk"
+PKG=`cat $MODPATH/package.txt`
 if [ "$BOOTMODE" == true ]; then
   for PKGS in $PKG; do
-    RES=`pm uninstall $PKGS`
+    RES=`pm uninstall $PKGS 2>/dev/null`
   done
 fi
 rm -rf $MODPATH/unused
@@ -135,7 +149,6 @@ rm -rf /persist/magisk/$MODID
 rm -rf /data/unencrypted/magisk/$MODID
 rm -rf /cache/magisk/$MODID
 ui_print " "
-
 # power save
 FILE=$MODPATH/system/etc/sysconfig/*
 if [ "`grep_prop power.save $OPTIONALS`" == 1 ]; then
@@ -238,15 +251,21 @@ if [ "`grep_prop miui.public $OPTIONALS`" != 0 ]; then
         libimage_arcsoft_4plus.so libstlport_shared.so"
   for NAMES in $NAME; do
     mv -f $MODPATH/system/lib/$NAMES $MODPATH/system/vendor/lib
-    mv -f $MODPATH/system/lib64/$NAMES $MODPATH/system/vendor/lib64
+    if [ "$IS64BIT" == true ]; then
+      mv -f $MODPATH/system/lib64/$NAMES $MODPATH/system/vendor/lib64
+    fi
   done
   cp -f $MODPATH/system/vendor/lib/libshell_jni.so $MODPATH/system/lib/modshell_jni.so
-  cp -f $MODPATH/system/vendor/lib64/libshell_jni.so $MODPATH/system/lib64/modshell_jni.so
+  if [ "$IS64BIT" == true ]; then
+    cp -f $MODPATH/system/vendor/lib64/libshell_jni.so $MODPATH/system/lib64/modshell_jni.so
+  fi
   FILE="$MODPATH/system/bin/shelld
         $MODPATH/system/lib*/modshell_jni.so"
   sed -i 's/libshell_jni.so/modshell_jni.so/g' $FILE
   cp -f $MODPATH/system/vendor/lib/libshell.so $MODPATH/system/lib/modshell.so
-  cp -f $MODPATH/system/vendor/lib64/libshell.so $MODPATH/system/lib64/modshell.so
+  if [ "$IS64BIT" == true ]; then
+    cp -f $MODPATH/system/vendor/lib64/libshell.so $MODPATH/system/lib64/modshell.so
+  fi
   sed -i 's/libshell.so/modshell.so/g' $MODPATH/system/lib*/*shell*.so
   ui_print " "
 fi

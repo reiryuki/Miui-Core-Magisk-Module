@@ -5,14 +5,25 @@
 - The MIT license specified here is for the Magisk Module, not for Miui apps and blobs.
 
 ## Descriptions
-- System core framework library of Miui ROM ported from Xiaomi Mi 9 (cepheus) as a dependency of any Miui app and Miui Magisk Module.
-- For Miui apps porter, your app must declare these lines after `<application />` in the AndroidManifest.xml if you want to load classes from this Miui Core: (Do not do this if your app have it's own library!)
+- System core framework library of Miui ROM ported from Xiaomi Mi 9 (cepheus) as a dependency of any Miui app and Magisk Module
+
+# For Miui App Porter
+- You can declare these lines bellow in your app AndroidManifest.xml after `<application />` if you want to load classes and resources from this Miui Core:
 
   `<uses-library android:name="com.miui.system" android:required="false" />`
 
   `<uses-library android:name="com.miui.rom" android:required="false" />`
 
   `<uses-library android:name="com.miui.core" android:required="false" />`
+  
+- Those libraries can even make your app crash in some ROMs caused by conflicted resources.
+- If com.miui.system library causes your app crashed, then use this line instead:
+
+  `<uses-library android:name="miui" android:required="false" />`
+
+- Do not do above if your app have it's own libraries!
+- Do not white list those libraries with your own Magisk Module /system/etc/permissions/ because there might be a conflict.
+- You don't need to declare all of those but just declare which is needed.
 
 ## Sources
 - https://dumps.tadiphone.dev/dumps/xiaomi/cepheus cepheus-user-11-RKQ1.200826.002-V12.5.3.0.RFACNXM-release-keys
@@ -32,7 +43,7 @@
 
 ## Installation Guide & Download Link
 - Install this module https://www.pling.com/p/1537512/ via Magisk app or recovery
-- Install any Miui app Magisk Module bellow
+- Install any Miui app or Miui Magisk Module which depends on this module
 - Reboot
 
 ## Miui Magisk Modules Available
@@ -52,6 +63,7 @@
 - Android 12.1 Nusantara ROM
 - Android 13 Nusantara ROM
 - Android 13 AOSP ROM
+- Android 13 CrDroid ROM
 
 ## Optionals
 - https://t.me/androidryukimodsdiscussions/60861
