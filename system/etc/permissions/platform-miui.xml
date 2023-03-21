@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <permissions>
-    <library name="com.miui.system"
-        file="/system/app/miuisystem/miuisystem.apk"/>
+    <library name="miui"
+        file="/system/framework/miui.jar"/>
     <library name="miuiframework"
+        file="/system/framework/miui.jar"/>
+    <library name="com.miui.system"
         file="/system/app/miuisystem/miuisystem.apk"/>
     <library name="com.miui.rom"
         file="/system/framework/framework-ext-res/framework-ext-res.apk"/>
@@ -44,7 +46,7 @@
         file="/system/framework/miuipushsdkshared.jar" />
     <library name="miui-stat.jar"
         file="/system/framework/miuistatssdkshared.jar"
-        dependency="com.miui.system"/>
+        dependency="com.miui.system" />
     <library name="miui-stat-v3.jar"
         file="/system/framework/miuistatssdksharedv3.jar" />
     <library name="eventbus.jar"
