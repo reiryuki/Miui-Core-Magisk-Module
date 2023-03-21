@@ -7,7 +7,7 @@
 ## Descriptions
 - System core framework library of Miui ROM ported from Xiaomi Mi 9 (cepheus) as a dependency of any Miui app and Magisk Module
 
-# For Miui App Porter
+## For Miui App Porter
 - You can declare these lines bellow in your app AndroidManifest.xml after `<application />` if you want to load classes and resources from this Miui Core:
 
   `<uses-library android:name="com.miui.system" android:required="false" />`
