@@ -247,7 +247,7 @@ hide_oat
 if [ "`grep_prop miui.public $OPTIONALS`" != 0 ]; then
   ui_print "- Using vendor public libraries method"
   NAME="libmiuinative.so libmiuiblur.so libthemeutils_jni.so
-        libshell_jni.so libshell.so libmiuixlog.so
+        libshell_jni.so libshell.so libmiuixlog.so libmiuiblursdk.so
         libimage_arcsoft_4plus.so libstlport_shared.so"
   for NAMES in $NAME; do
     mv -f $MODPATH/system/lib/$NAMES $MODPATH/system/vendor/lib
@@ -364,6 +364,17 @@ NAME=`ls $MODPATH/system/lib`
 file_check_system
 NAME=`ls $MODPATH/system/vendor/lib`
 file_check_vendor
+
+# media
+if [ ! -d $PRODUCT/media ] && [ -d $SYSTEM/media ]; then
+  ui_print "- Using /system/media instead of /product/media"
+  mv -f $MODPATH/system/product/media $MODPATH/system
+  rm -rf $MODPATH/system/product
+  ui_print " "
+elif [ ! -d $PRODUCT/media ] && [ ! -d $SYSTEM/media ]; then
+  ui_print "! /product/media & /system/media not found"
+  ui_print " "
+fi
 
 # permission
 ui_print "- Setting permission..."
