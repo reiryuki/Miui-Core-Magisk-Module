@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<permissions>
-    <library name="com.qti.slalib"
-        file="/system/framework/com.qti.slalib.jar"/>
-</permissions>
