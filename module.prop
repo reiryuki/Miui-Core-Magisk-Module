@@ -1,8 +1,8 @@
 id=MiuiCore
 name=Miui Core
-version=v4.12
-versionCode=42
+version=v4.13
+versionCode=43
 author=Rei Ryuki the Fixer
-description=System core framework library of Miui ROM ported from Xiaomi Mi 9 (cepheus) as a dependency of any Miui app and Magisk Module for any Android 5 and up non-Miui ROM.
+description=System core framework library of Miui ROM ported from Xiaomi Mi 9 (cepheus) as a dependency of any Miui app and Miui Magisk Module for any Android 5 and up non-Miui ROM.
 
 

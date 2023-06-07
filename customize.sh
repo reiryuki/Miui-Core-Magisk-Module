@@ -1,49 +1,156 @@
 # space
 ui_print " "
 
-# magisk
-if [ -d /sbin/.magisk ]; then
-  MAGISKTMP=/sbin/.magisk
-else
-  MAGISKTMP=`realpath /dev/*/.magisk`
-fi
-
-# path
-if [ "$BOOTMODE" == true ]; then
-  MIRROR=$MAGISKTMP/mirror
-else
-  MIRROR=
-fi
-SYSTEM=`realpath $MIRROR/system`
-PRODUCT=`realpath $MIRROR/product`
-VENDOR=`realpath $MIRROR/vendor`
-SYSTEM_EXT=`realpath $MIRROR/system_ext`
-if [ -d $MIRROR/odm ]; then
-  ODM=`realpath $MIRROR/odm`
-else
-  ODM=`realpath /odm`
-fi
-if [ -d $MIRROR/my_product ]; then
-  MY_PRODUCT=`realpath $MIRROR/my_product`
-else
-  MY_PRODUCT=`realpath /my_product`
-fi
-
-# optionals
-OPTIONALS=/sdcard/optionals.prop
-if [ ! -f $OPTIONALS ]; then
-  touch $OPTIONALS
-fi
-
 # info
 MODVER=`grep_prop version $MODPATH/module.prop`
 MODVERCODE=`grep_prop versionCode $MODPATH/module.prop`
 ui_print " ID=$MODID"
 ui_print " Version=$MODVER"
 ui_print " VersionCode=$MODVERCODE"
-ui_print " MagiskVersion=$MAGISK_VER"
-ui_print " MagiskVersionCode=$MAGISK_VER_CODE"
+if [ "$KSU" == true ]; then
+  ui_print " KSUVersion=$KSU_VER"
+  ui_print " KSUVersionCode=$KSU_VER_CODE"
+  ui_print " KSUKernelVersionCode=$KSU_KERNEL_VER_CODE"
+else
+  ui_print " MagiskVersion=$MAGISK_VER"
+  ui_print " MagiskVersionCode=$MAGISK_VER_CODE"
+fi
 ui_print " "
+
+# huskydg function
+get_device() {
+PAR="$1"
+DEV="`cat /proc/self/mountinfo | awk '{ if ( $5 == "'$PAR'" ) print $3 }' | head -1 | sed 's/:/ /g'`"
+}
+mount_mirror() {
+SRC="$1"
+DES="$2"
+RAN="`head -c6 /dev/urandom | base64 | tr -dc 'a-zA-Z0-9'`"
+while [ -e /dev/$RAN ]; do
+  RAN="`head -c6 /dev/urandom | base64 | tr -dc 'a-zA-Z0-9'`"
+done
+mknod /dev/$RAN b `get_device "$SRC"; echo $DEV`
+if mount -t ext4 -o ro /dev/$RAN "$DES"\
+|| mount -t erofs -o ro /dev/$RAN "$DES"\
+|| mount -t f2fs -o ro /dev/$RAN "$DES"\
+|| mount -t ubifs -o ro /dev/$RAN "$DES"; then
+  blockdev --setrw /dev/$RAN
+  rm -f /dev/$RAN
+  return 0
+fi
+rm -f /dev/$RAN
+return 1
+}
+unmount_mirror() {
+DIRS="$MIRROR/system_root $MIRROR/system $MIRROR/vendor
+      $MIRROR/product $MIRROR/system_ext $MIRROR/odm
+      $MIRROR/my_product $MIRROR"
+for DIR in $DIRS; do
+  umount $DIR
+done
+}
+mount_odm_to_mirror() {
+DIR=/odm
+if [ -d $DIR ]; then
+  ui_print "- Mount $MIRROR$DIR..."
+  mkdir -p $MIRROR$DIR
+  if mount_mirror $DIR $MIRROR$DIR; then
+    ui_print "  $MIRROR$DIR mount success"
+  else
+    ui_print "  ! $MIRROR$DIR mount failed"
+    rm -rf $MIRROR$DIR
+    if [ -d $MIRROR/system_root$DIR ]; then
+      ln -sf $MIRROR/system_root$DIR $MIRROR
+    fi
+  fi
+  ui_print " "
+fi
+}
+mount_my_product_to_mirror() {
+DIR=/my_product
+if [ -d $DIR ]; then
+  ui_print "- Mount $MIRROR$DIR..."
+  mkdir -p $MIRROR$DIR
+  if mount_mirror $DIR $MIRROR$DIR; then
+    ui_print "  $MIRROR$DIR mount success"
+  else
+    ui_print "  ! $MIRROR$DIR mount failed"
+    rm -rf $MIRROR$DIR
+    if [ -d $MIRROR/system_root$DIR ]; then
+      ln -sf $MIRROR/system_root$DIR $MIRROR
+    fi
+  fi
+  ui_print " "
+fi
+}
+mount_partitions_to_mirror() {
+unmount_mirror
+# mount system
+if [ "$SYSTEM_ROOT" == true ]; then
+  DIR=/system_root
+  ui_print "- Mount $MIRROR$DIR..."
+  mkdir -p $MIRROR$DIR
+  if mount_mirror / $MIRROR$DIR; then
+    ui_print "  $MIRROR$DIR mount success"
+    rm -rf $MIRROR/system
+    ln -sf $MIRROR$DIR/system $MIRROR
+  else
+    ui_print "  ! $MIRROR$DIR mount failed"
+    rm -rf $MIRROR$DIR
+  fi
+else
+  DIR=/system
+  ui_print "- Mount $MIRROR$DIR..."
+  mkdir -p $MIRROR$DIR
+  if mount_mirror $DIR $MIRROR$DIR; then
+    ui_print "  $MIRROR$DIR mount success"
+  else
+    ui_print "  ! $MIRROR$DIR mount failed"
+    rm -rf $MIRROR$DIR
+  fi
+fi
+ui_print " "
+# mount vendor
+DIR=/vendor
+ui_print "- Mount $MIRROR$DIR..."
+mkdir -p $MIRROR$DIR
+if mount_mirror $DIR $MIRROR$DIR; then
+  ui_print "  $MIRROR$DIR mount success"
+else
+  ui_print "  ! $MIRROR$DIR mount failed"
+  rm -rf $MIRROR$DIR
+  ln -sf $MIRROR/system$DIR $MIRROR
+fi
+ui_print " "
+# mount product
+DIR=/product
+ui_print "- Mount $MIRROR$DIR..."
+mkdir -p $MIRROR$DIR
+if mount_mirror $DIR $MIRROR$DIR; then
+  ui_print "  $MIRROR$DIR mount success"
+else
+  ui_print "  ! $MIRROR$DIR mount failed"
+  rm -rf $MIRROR$DIR
+  ln -sf $MIRROR/system$DIR $MIRROR
+fi
+ui_print " "
+# mount system_ext
+DIR=/system_ext
+ui_print "- Mount $MIRROR$DIR..."
+mkdir -p $MIRROR$DIR
+if mount_mirror $DIR $MIRROR$DIR; then
+  ui_print "  $MIRROR$DIR mount success"
+else
+  ui_print "  ! $MIRROR$DIR mount failed"
+  rm -rf $MIRROR$DIR
+  if [ -d $MIRROR/system$DIR ]; then
+    ln -sf $MIRROR/system$DIR $MIRROR
+  fi
+fi
+ui_print " "
+mount_odm_to_mirror
+mount_my_product_to_mirror
+}
 
 # bit
 if [ "$IS64BIT" != true ]; then
@@ -66,10 +173,50 @@ else
   ui_print " "
 fi
 
+# magisk
+MAGISKPATH=`magisk --path`
+if [ "$BOOTMODE" == true ]; then
+  if [ "$MAGISKPATH" ]; then
+    mount -o rw,remount $MAGISKPATH
+    MAGISKTMP=$MAGISKPATH/.magisk
+    MIRROR=$MAGISKTMP/mirror
+  else
+    MAGISKTMP=/mnt
+    mount -o rw,remount $MAGISKTMP
+    MIRROR=$MAGISKTMP/mirror
+    mount_partitions_to_mirror
+  fi
+fi
+
+# path
+SYSTEM=`realpath $MIRROR/system`
+PRODUCT=`realpath $MIRROR/product`
+VENDOR=`realpath $MIRROR/vendor`
+SYSTEM_EXT=`realpath $MIRROR/system_ext`
+if [ "$BOOTMODE" == true ]; then
+  if [ ! -d $MIRROR/odm ]; then
+    mount_odm_to_mirror
+  fi
+  if [ ! -d $MIRROR/my_product ]; then
+    mount_my_product_to_mirror
+  fi
+fi
+ODM=`realpath $MIRROR/odm`
+MY_PRODUCT=`realpath $MIRROR/my_product`
+
+# optionals
+OPTIONALS=/sdcard/optionals.prop
+if [ ! -f $OPTIONALS ]; then
+  touch $OPTIONALS
+fi
+
 # mount
 if [ "$BOOTMODE" != true ]; then
-  mount -o rw -t auto /dev/block/bootdevice/by-name/cust /vendor
-  mount -o rw -t auto /dev/block/bootdevice/by-name/vendor /vendor
+  if [ -e /dev/block/bootdevice/by-name/vendor ]; then
+    mount -o rw -t auto /dev/block/bootdevice/by-name/vendor /vendor
+  else
+    mount -o rw -t auto /dev/block/bootdevice/by-name/cust /vendor
+  fi
   mount -o rw -t auto /dev/block/bootdevice/by-name/persist /persist
   mount -o rw -t auto /dev/block/bootdevice/by-name/metadata /metadata
 fi
@@ -89,7 +236,7 @@ ui_print "$NAME"
 ui_print "  function at"
 ui_print "$FILE"
 ui_print "  Please wait..."
-if ! grep -Eq $NAME $FILE; then
+if ! grep -q $NAME $FILE; then
   ui_print "  Using legacy libraries"
   cp -rf $MODPATH/system_10/* $MODPATH/system
 fi
@@ -98,27 +245,27 @@ ui_print " "
 
 # check
 NAME=_ZN7android23sp_report_stack_pointerEv
-TARGET="$MODPATH/system/bin/shelld
-        $MODPATH/system/lib/libexmedia.so
-        $MODPATH/system/lib/libmiuiblur.so
-        $MODPATH/system/lib/libshell.so
-        $MODPATH/system/vendor/lib/libcdsprpc.so"
-LISTS=`strings $TARGET | grep ^lib | grep .so\
-       | sed 's/libshellservice.so//' | sed 's/libshell_jni.so//'\
-       | sed 's/libexmedia.so//' | sed 's/libmiuiblur.so//'\
-       | sed 's/libshell.so//' | sed 's/libcdsprpc.so//'\
-       | sed 's/lib%s_skel.so//'`
+DES="$MODPATH/system/bin/shelld
+      $MODPATH/system/lib/libexmedia.so
+      $MODPATH/system/lib/libmiuiblur.so
+      $MODPATH/system/lib/libshell.so
+      $MODPATH/system/vendor/lib/libcdsprpc.so"
+LISTS=`strings $DES | grep ^lib | grep .so\
+       | sed -e 's|libshellservice.so||g' -e 's|libshell_jni.so||g'\
+       -e 's|libexmedia.so||g' -e 's|libmiuiblur.so||g'\
+       -e 's|libshell.so||g' -e 's|libcdsprpc.so||g'\
+       -e 's|lib%s_skel.so||g'`
 FILE=`for LIST in $LISTS; do echo $SYSTEM/lib/$LIST; done`
 check_function
 if [ "$IS64BIT" == true ]; then
-  TARGET="$MODPATH/system/lib64/libexmedia.so
-          $MODPATH/system/lib64/libmiuiblur.so
-          $MODPATH/system/lib64/libshell.so
-          $MODPATH/system/vendor/lib64/libcdsprpc.so"
-  LISTS=`strings $TARGET | grep ^lib | grep .so\
-         | sed 's/libexmedia.so//' | sed 's/libmiuiblur.so//'\
-         | sed 's/libshell.so//' | sed 's/libcdsprpc.so//'\
-         | sed 's/lib%s_skel.so//'`
+  DES="$MODPATH/system/lib64/libexmedia.so
+        $MODPATH/system/lib64/libmiuiblur.so
+        $MODPATH/system/lib64/libshell.so
+        $MODPATH/system/vendor/lib64/libcdsprpc.so"
+  LISTS=`strings $DES | grep ^lib | grep .so\
+         | sed -e 's|libexmedia.so||g' -e 's|libmiuiblur.so||g'\
+         -e 's|libshell.so||g' -e 's|libcdsprpc.so||g'\
+         -e 's|lib%s_skel.so||g'`
   FILE=`for LIST in $LISTS; do echo $SYSTEM/lib64/$LIST; done`
   check_function
 fi
@@ -155,8 +302,8 @@ if [ "`grep_prop power.save $OPTIONALS`" == 1 ]; then
   ui_print "- $MODNAME will not be allowed in power save."
   ui_print "  It may save your battery but decreasing $MODNAME performance."
   for PKGS in $PKG; do
-    sed -i "s/<allow-in-power-save package=\"$PKGS\"\/>//g" $FILE
-    sed -i "s/<allow-in-power-save package=\"$PKGS\" \/>//g" $FILE
+    sed -i "s|<allow-in-power-save package=\"$PKGS\"/>||g" $FILE
+    sed -i "s|<allow-in-power-save package=\"$PKGS\" />||g" $FILE
   done
   ui_print " "
 fi
@@ -231,46 +378,6 @@ elif [ "`grep_prop permissive.mode $OPTIONALS`" == 2 ]; then
 fi
 
 # function
-hide_oat() {
-for APPS in $APP; do
-  mkdir -p `find $MODPATH/system -type d -name $APPS`/oat
-  touch `find $MODPATH/system -type d -name $APPS`/oat/.replace
-done
-}
-
-# hide
-APP="`ls $MODPATH/system/priv-app`
-     `ls $MODPATH/system/app` framework-ext-res"
-hide_oat
-
-# move
-if [ "`grep_prop miui.public $OPTIONALS`" != 0 ]; then
-  ui_print "- Using vendor public libraries method"
-  NAME="libmiuinative.so libmiuiblur.so libthemeutils_jni.so
-        libshell_jni.so libshell.so libmiuixlog.so libmiuiblursdk.so
-        libimage_arcsoft_4plus.so libstlport_shared.so"
-  for NAMES in $NAME; do
-    mv -f $MODPATH/system/lib/$NAMES $MODPATH/system/vendor/lib
-    if [ "$IS64BIT" == true ]; then
-      mv -f $MODPATH/system/lib64/$NAMES $MODPATH/system/vendor/lib64
-    fi
-  done
-  cp -f $MODPATH/system/vendor/lib/libshell_jni.so $MODPATH/system/lib/modshell_jni.so
-  if [ "$IS64BIT" == true ]; then
-    cp -f $MODPATH/system/vendor/lib64/libshell_jni.so $MODPATH/system/lib64/modshell_jni.so
-  fi
-  FILE="$MODPATH/system/bin/shelld
-        $MODPATH/system/lib*/modshell_jni.so"
-  sed -i 's/libshell_jni.so/modshell_jni.so/g' $FILE
-  cp -f $MODPATH/system/vendor/lib/libshell.so $MODPATH/system/lib/modshell.so
-  if [ "$IS64BIT" == true ]; then
-    cp -f $MODPATH/system/vendor/lib64/libshell.so $MODPATH/system/lib64/modshell.so
-  fi
-  sed -i 's/libshell.so/modshell.so/g' $MODPATH/system/lib*/*shell*.so
-  ui_print " "
-fi
-
-# function
 file_check_bin() {
 for NAMES in $NAME; do
   FILE=`realpath $SYSTEM/*bin/$NAMES`
@@ -336,7 +443,7 @@ for NAMES in $NAME; do
       rm -f $SRC
     else
       TARGET="$VENDOR/lib64/$DES $ODM/lib64/$DES"
-      if ! grep -Eq $NAMES $TARGET; then
+      if ! grep -q $NAMES $TARGET; then
         rm -f $SRC
       fi
     fi
@@ -350,7 +457,7 @@ for NAMES in $NAME; do
     rm -f $SRC
   else
     TARGET="$VENDOR/lib/$DES $ODM/lib/$DES"
-    if ! grep -Eq $NAMES $TARGET; then
+    if ! grep -q $NAMES $TARGET; then
       rm -f $SRC
     fi
   fi
@@ -366,37 +473,33 @@ NAME=`ls $MODPATH/system/vendor/lib`
 file_check_vendor
 
 # media
-if [ ! -d $PRODUCT/media ] && [ -d $SYSTEM/media ]; then
+if [ ! -d /product/media ] && [ -d /system/media ]; then
   ui_print "- Using /system/media instead of /product/media"
   mv -f $MODPATH/system/product/media $MODPATH/system
   rm -rf $MODPATH/system/product
   ui_print " "
-elif [ ! -d $PRODUCT/media ] && [ ! -d $SYSTEM/media ]; then
+elif [ ! -d /product/media ] && [ ! -d /system/media ]; then
   ui_print "! /product/media & /system/media not found"
   ui_print " "
 fi
 
-# permission
-ui_print "- Setting permission..."
-FILE=`find $MODPATH/system/bin\
-           $MODPATH/system/vendor/bin -type f`
-for FILES in $FILE; do
-  chmod 0755 $FILES
-done
-chmod 0751 $MODPATH/system/bin
-chmod 0751 $MODPATH/system/vendor/bin
-if [ "$API" -ge 26 ]; then
-  DIR=`find $MODPATH/system/bin\
-            $MODPATH/system/vendor -type d`
-  for DIRS in $DIR; do
-    chown 0.2000 $DIRS
-  done
-  FILE=`find $MODPATH/system/bin\
-             $MODPATH/system/vendor/bin -type f`
-  for FILES in $FILE; do
-    chown 0.2000 $FILES
-  done
+# unmount
+if [ "$BOOTMODE" == true ] && [ ! "$MAGISKPATH" ]; then
+  unmount_mirror
 fi
-ui_print " "
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
