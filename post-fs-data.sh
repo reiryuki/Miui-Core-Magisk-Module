@@ -59,26 +59,18 @@ fi
 
 # permission
 chmod 0751 $MODPATH/system/bin
-if [ -L $MODPATH/system/vendor ]\
-&& [ -d $MODPATH/vendor ]; then
-  chmod 0751 $MODPATH/vendor/bin
-else
-  chmod 0751 $MODPATH/system/vendor/bin
-fi
-FILES=`find $MODPATH/system/bin\
-            $MODPATH/vendor/bin\
-            $MODPATH/system/vendor/bin -type f`
+FILES=`find $MODPATH/system/bin -type f`
 for FILE in $FILES; do
   chmod 0755 $FILE
 done
 if [ "$API" -ge 26 ]; then
   DIRS=`find $MODPATH/system/bin\
+             $MODPATH/vendor\
              $MODPATH/system/vendor -type d`
   for DIR in $DIRS; do
     chown 0.2000 $DIR
   done
-  FILES=`find $MODPATH/system/bin\
-              $MODPATH/system/vendor/bin -type f`
+  FILES=`find $MODPATH/system/bin -type f`
   for FILE in $FILES; do
     chown 0.2000 $FILE
   done

@@ -217,6 +217,10 @@ if [ "$BOOTMODE" != true ]; then
   else
     mount -o rw -t auto /dev/block/bootdevice/by-name/cust /vendor
   fi
+  mount -o rw -t auto /dev/block/bootdevice/by-name/product /product
+  mount -o rw -t auto /dev/block/bootdevice/by-name/system_ext /system_ext
+  mount -o rw -t auto /dev/block/bootdevice/by-name/odm /odm
+  mount -o rw -t auto /dev/block/bootdevice/by-name/my_product /my_product
   mount -o rw -t auto /dev/block/bootdevice/by-name/persist /persist
   mount -o rw -t auto /dev/block/bootdevice/by-name/metadata /metadata
 fi
