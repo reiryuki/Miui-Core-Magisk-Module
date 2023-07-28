@@ -2,11 +2,11 @@
 
 ## DISCLAIMER
 - Miui apps and blobs are owned by Xiaomi™.
-- The MIT license specified here is for the Magisk Module, not for Miui apps and blobs.
+- The MIT license specified here is for the Magisk Module only, not for Miui apps and blobs.
 
 ## Descriptions
 - System core framework library of Miui ROM ported from Xiaomi Mi 9 (cepheus) as a dependency of any Miui app and Miui Magisk Module
-- With this module, you can even normal install any non-system Miui app: apkmirror.com/apk/xiaomi-inc
+- With this module, you can even normal install any non-system Miui app: https://apkmirror.com/apk/xiaomi-inc
 
 ## For Miui App Porter
 - You can declare these lines bellow in your app AndroidManifest.xml after `<application />` if you want to load classes and resources from this Miui Core:
@@ -44,10 +44,10 @@
 - Magisk or KernelSU installed
 
 ## Installation Guide & Download Link
-- Install this module https://www.pling.com/p/1537512/ via Magisk app or KernelSU app or Recovery (unless you are using KernelSU)
+- Install this module https://www.pling.com/p/1537512/ via Magisk app or KernelSU app or Recovery if Magisk installed
 - Install any Miui app or Miui Magisk Module which depends on this module
 - Reboot
-- If you are using KernelSU, you need to allow superuser list manually all package name listed in package.txt and reboot after
+- If you are using KernelSU, you need to allow superuser list manually all package name listed in package.txt (and your home launcher app also) (enable show system apps) and reboot after
 
 ## Miui Magisk Modules Available
 - https://github.com/reiryuki/Mi-Music-Magisk-Module
@@ -64,9 +64,7 @@
 - Android 11 DotOS ROM
 - Android 12 Ancient OS ROM
 - Android 12.1 Nusantara ROM
-- Android 13 Nusantara ROM
-- Android 13 AOSP ROM
-- Android 13 CrDroid ROM
+- Android 13 Nusantara ROM, AOSP ROM, & CrDroid ROM
 
 ## Optionals
 - https://t.me/androidryukimodsdiscussions/60861
