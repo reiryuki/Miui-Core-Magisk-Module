@@ -47,7 +47,7 @@
 - Install this module https://www.pling.com/p/1537512/ via Magisk app or KernelSU app or Recovery if Magisk installed
 - Install any Miui app or Miui Magisk Module which depends on this module
 - Reboot
-- If you are using KernelSU, you need to allow superuser list manually all package name listed in package.txt (and your home launcher app also) (enable show system apps) and reboot after
+- If you are using KernelSU, you need to allow superuser list manually all package name listed in package.txt (enable show system apps) and reboot after
 
 ## Miui Magisk Modules Available
 - https://github.com/reiryuki/Mi-Music-Magisk-Module
