@@ -160,7 +160,7 @@ patch_public_libraries
 NAMES="libmiuiblursdk.so libmiuinative.so libmiuiblur.so
        libthemeutils_jni.so libshell_jni.so libshell.so libmiuixlog.so
        libimage_arcsoft_4plus.so libstlport_shared.so"
-patch_public_libraries_nopreload
+#patch_public_libraries_nopreload
 NAMES="libadsprpc.so libcdsprpc.so libOpenCL.so
        libarcsoft_beautyshot.so libmpbase.so"
 FILE=$MODVETC/$DES
@@ -169,7 +169,12 @@ patch_public_libraries
 if [ "$API" -ge 26 ]; then
   chcon u:object_r:vendor_configs_file:s0 $FILE
   for NAME in $NAMES; do
-    chcon u:object_r:same_process_hal_file:s0 $MODPATH/system/vendor/lib*/$NAME
+    if [ -L $MODPATH/system/vendor ]\
+    && [ -d $MODPATH/vendor ]; then
+      chcon u:object_r:same_process_hal_file:s0 $MODPATH/vendor/lib*/$NAME
+    else
+      chcon u:object_r:same_process_hal_file:s0 $MODPATH/system/vendor/lib*/$NAME
+    fi
   done
 fi
 

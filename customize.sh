@@ -230,6 +230,16 @@ elif [ "`grep_prop permissive.mode $OPTIONALS`" == 2 ]; then
   ui_print " "
 fi
 
+# public
+FILE=$MODPATH/post-fs-data.sh
+if [ "`grep_prop miui.public $OPTIONALS`" != 0 ]; then
+  sed -i 's|#patch_public_libraries_nopreload|patch_public_libraries_nopreload|g' $FILE
+else
+  ui_print "- Does not use public libraries nopreload mode"
+  ui_print "  You will not be able to normal install Miui apps"
+  ui_print " "
+fi
+
 # function
 file_check_bin() {
 for NAME in $NAMES; do
