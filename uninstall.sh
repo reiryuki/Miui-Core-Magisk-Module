@@ -3,7 +3,7 @@ mount -o rw,remount /data
 [ -z $MODID ] && MODID=`basename "$MODPATH"`
 
 # log
-exec 2>$MODPATH\_uninstall.log
+exec 2>/data/media/0/$MODID\_uninstall.log
 set -x
 
 # run

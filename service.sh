@@ -29,7 +29,6 @@ if [ "$API" -ge 33 ]; then
   pm grant $PKG android.permission.READ_MEDIA_AUDIO
   pm grant $PKG android.permission.READ_MEDIA_VIDEO
   pm grant $PKG android.permission.READ_MEDIA_IMAGES
-  pm grant $PKG android.permission.POST_NOTIFICATIONS
   appops set $PKG ACCESS_RESTRICTED_SETTINGS allow
 fi
 appops set $PKG LEGACY_STORAGE allow
