@@ -9,6 +9,25 @@ if [ "$BOOTMODE" != true ]; then
   ui_print " "
 fi
 
+# optionals
+OPTIONALS=/sdcard/optionals.prop
+if [ ! -f $OPTIONALS ]; then
+  touch $OPTIONALS
+fi
+
+# debug
+if [ "`grep_prop debug.log $OPTIONALS`" == 1 ]; then
+  ui_print "- The install log will contain detailed information"
+  set -x
+  ui_print " "
+fi
+
+# var
+LIST32BIT=`grep_get_prop ro.product.cpu.abilist32`
+if [ ! "$LIST32BIT" ]; then
+  LIST32BIT=`grep_get_prop ro.system.product.cpu.abilist32`
+fi
+
 # run
 . $MODPATH/function.sh
 
@@ -31,12 +50,21 @@ ui_print " "
 
 # bit
 if [ "$IS64BIT" == true ]; then
-  ui_print "- 64 bit"
+  ui_print "- 64 bit architecture"
+  ui_print " "
+  # 32 bit
+  if [ "$LIST32BIT" ]; then
+    ui_print "- 32 bit library support"
+  else
+    ui_print "- Doesn't support 32 bit library"
+    rm -rf $MODPATH/system*/lib $MODPATH/system*/vendor/lib
+  fi
+  ui_print " "
 else
-  ui_print "- 32 bit"
+  ui_print "- 32 bit architecture"
   rm -rf `find $MODPATH -type d -name *64*`
+  ui_print " "
 fi
-ui_print " "
 
 # sdk
 NUM=21
@@ -58,10 +86,16 @@ magisk_setup
 
 # path
 SYSTEM=`realpath $MIRROR/system`
-PRODUCT=`realpath $MIRROR/product`
-VENDOR=`realpath $MIRROR/vendor`
-SYSTEM_EXT=`realpath $MIRROR/system_ext`
 if [ "$BOOTMODE" == true ]; then
+  if [ ! -d $MIRROR/vendor ]; then
+    mount_vendor_to_mirror
+  fi
+  if [ ! -d $MIRROR/product ]; then
+    mount_product_to_mirror
+  fi
+  if [ ! -d $MIRROR/system_ext ]; then
+    mount_system_ext_to_mirror
+  fi
   if [ ! -d $MIRROR/odm ]; then
     mount_odm_to_mirror
   fi
@@ -69,14 +103,11 @@ if [ "$BOOTMODE" == true ]; then
     mount_my_product_to_mirror
   fi
 fi
+VENDOR=`realpath $MIRROR/vendor`
+PRODUCT=`realpath $MIRROR/product`
+SYSTEM_EXT=`realpath $MIRROR/system_ext`
 ODM=`realpath $MIRROR/odm`
 MY_PRODUCT=`realpath $MIRROR/my_product`
-
-# optionals
-OPTIONALS=/sdcard/optionals.prop
-if [ ! -f $OPTIONALS ]; then
-  touch $OPTIONALS
-fi
 
 # sepolicy
 FILE=$MODPATH/sepolicy.rule
@@ -102,18 +133,23 @@ ui_print " "
 
 # check
 NAME=_ZN7android23sp_report_stack_pointerEv
-DES="$MODPATH/system/bin/shelld
-      $MODPATH/system/lib/libexmedia.so
-      $MODPATH/system/lib/libmiuiblur.so
-      $MODPATH/system/lib/libshell.so
-      $MODPATH/system/vendor/lib/libcdsprpc.so"
+DES=$MODPATH/system/bin/shelld
 LISTS=`strings $DES | grep ^lib | grep .so\
-        | sed -e 's|libshellservice.so||g' -e 's|libshell_jni.so||g'\
-        -e 's|libexmedia.so||g' -e 's|libmiuiblur.so||g'\
-        -e 's|libshell.so||g' -e 's|libcdsprpc.so||g'\
-        -e 's|lib%s_skel.so||g'`
+        | sed -e 's|libshellservice.so||g' -e 's|libshell_jni.so||g'`
 FILE=`for LIST in $LISTS; do echo $SYSTEM/lib/$LIST; done`
 check_function
+if [ "$LIST32BIT" ]; then
+  DES="$MODPATH/system/lib/libexmedia.so
+        $MODPATH/system/lib/libmiuiblur.so
+        $MODPATH/system/lib/libshell.so
+        $MODPATH/system/vendor/lib/libcdsprpc.so"
+  LISTS=`strings $DES | grep ^lib | grep .so\
+          | sed -e 's|libexmedia.so||g' -e 's|libmiuiblur.so||g'\
+          -e 's|libshell.so||g' -e 's|libcdsprpc.so||g'\
+          -e 's|lib%s_skel.so||g'`
+  FILE=`for LIST in $LISTS; do echo $SYSTEM/lib/$LIST; done`
+  check_function
+fi
 if [ "$IS64BIT" == true ]; then
   DES="$MODPATH/system/lib64/libexmedia.so
         $MODPATH/system/lib64/libmiuiblur.so
@@ -241,99 +277,48 @@ else
 fi
 
 # function
-file_check_bin() {
-for NAME in $NAMES; do
-  FILE=`realpath $SYSTEM/*bin/$NAME`
-  FILE2=`realpath $SYSTEM_EXT/*bin/$NAME`
-  FILE3=`realpath $VENDOR/*bin/$NAME`
-  if [ "$FILE" ] || [ "$FILE2" ] || [ "$FILE3" ]; then
-    ui_print "- Detected $NAME"
-    ui_print " "
-    rm -f $MODPATH/system/bin/$NAME
-    rm -f $MODPATH/system/vendor/bin/$NAME
-  fi
-done
-}
 file_check_system() {
-for NAME in $NAMES; do
-  if [ "$IS64BIT" == true ]; then
-    FILE=$SYSTEM/lib64/$NAME
-    FILE2=$SYSTEM_EXT/lib64/$NAME
-    if [ -f $FILE ] || [ -f $FILE2 ]; then
-      ui_print "- Detected $NAME 64"
-      ui_print " "
-      rm -f $MODPATH/system/lib64/$NAME
-    fi
-  fi
-  FILE=$SYSTEM/lib/$NAME
-  FILE2=$SYSTEM_EXT/lib/$NAME
-  if [ -f $FILE ] || [ -f $FILE2 ]; then
-    ui_print "- Detected $NAME"
+for FILE in $FILES; do
+  DES=$SYSTEM$FILE
+  DES2=$SYSTEM_EXT$FILE
+  if [ -f $DES ] || [ -f $DES2 ]; then
+    ui_print "- Detected $FILE"
     ui_print " "
-    rm -f $MODPATH/system/lib/$NAME
+    rm -f $MODPATH/system$FILE
   fi
 done
 }
 file_check_vendor() {
-for NAME in $NAMES; do
-  if [ "$IS64BIT" == true ]; then
-    FILE=$VENDOR/lib64/$NAME
-    FILE2=$ODM/lib64/$NAME
-    if [ -f $FILE ] || [ -f $FILE2 ]; then
-      ui_print "- Detected $NAME 64"
-      ui_print " "
-      rm -f $MODPATH/system/vendor/lib64/$NAME
-    fi
-  fi
-  FILE=$VENDOR/lib/$NAME
-  FILE2=$ODM/lib/$NAME
-  if [ -f $FILE ] || [ -f $FILE2 ]; then
-    ui_print "- Detected $NAME"
+for FILE in $FILES; do
+  DES=$VENDOR$FILE
+  DES2=$ODM$FILE
+  if [ -f $DES ] || [ -f $DES2 ]; then
+    ui_print "- Detected $FILE"
     ui_print " "
-    rm -f $MODPATH/system/vendor/lib/$NAME
-  fi
-done
-}
-file_check_vendor_grep() {
-for NAME in $NAMES; do
-  if [ "$IS64BIT" == true ]; then
-    FILE=$VENDOR/lib64/$NAME
-    FILE2=$ODM/lib64/$NAME
-    SRC=$MODPATH/system/vendor/lib64/$NAME
-    if [ -f $FILE ] || [ -f $FILE2 ]; then
-      ui_print "- Detected $NAME 64"
-      ui_print " "
-      rm -f $SRC
-    else
-      TARGET="$VENDOR/lib64/$DES $ODM/lib64/$DES"
-      if ! grep -q $NAME $TARGET; then
-        rm -f $SRC
-      fi
-    fi
-  fi
-  FILE=$VENDOR/lib/$NAME
-  FILE2=$ODM/lib/$NAME
-  SRC=$MODPATH/system/vendor/lib/$NAME
-  if [ -f $FILE ] || [ -f $FILE2 ]; then
-    ui_print "- Detected $NAME"
-    ui_print " "
-    rm -f $SRC
-  else
-    TARGET="$VENDOR/lib/$DES $ODM/lib/$DES"
-    if ! grep -q $NAME $TARGET; then
-      rm -f $SRC
-    fi
+    rm -f $MODPATH/system/vendor$FILE
   fi
 done
 }
 
 # check
-NAMES=shelld
-file_check_bin
-NAMES=`ls $MODPATH/system/lib`
+FILES=/bin/shelld
 file_check_system
-NAMES=`ls $MODPATH/system/vendor/lib`
-file_check_vendor
+if [ "$LIST32BIT" ]; then
+  LISTS=`ls $MODPATH/system/lib`
+  FILES=`for LIST in $LISTS; do echo /lib/$LIST; done`
+  file_check_system
+  LISTS=`ls $MODPATH/system/vendor/lib`
+  FILES=`for LIST in $LISTS; do echo /lib/$LIST; done`
+  file_check_vendor
+fi
+if [ "$IS64BIT" == true ]; then
+  LISTS=`ls $MODPATH/system/lib64`
+  FILES=`for LIST in $LISTS; do echo /lib64/$LIST; done`
+  file_check_system
+  LISTS=`ls $MODPATH/system/vendor/lib64`
+  FILES=`for LIST in $LISTS; do echo /lib64/$LIST; done`
+  file_check_vendor
+fi
 
 # media
 if [ ! -d /product/media ] && [ -d /system/media ]; then

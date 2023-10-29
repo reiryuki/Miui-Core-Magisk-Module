@@ -84,13 +84,6 @@ if [ "$DEVICE" == cancro ]; then
   fi
 fi
 
-# cleaning
-FILE=$MODPATH/cleaner.sh
-if [ -f $FILE ]; then
-  . $FILE
-  rm -f $FILE
-fi
-
 # permission
 chmod 0751 $MODPATH/system/bin
 FILES=`find $MODPATH/system/bin -type f`
@@ -161,7 +154,7 @@ NAMES="libmiuiblursdk.so libmiuinative.so libmiuiblur.so
        libthemeutils_jni.so libshell_jni.so libshell.so libmiuixlog.so
        libimage_arcsoft_4plus.so libstlport_shared.so"
 #patch_public_libraries_nopreload
-NAMES="libadsprpc.so libcdsprpc.so libOpenCL.so
+NAMES="libcdsprpc.so libadsprpc.so libOpenCL.so
        libarcsoft_beautyshot.so libmpbase.so"
 FILE=$MODVETC/$DES
 cp -af $VETC/$DES $MODVETC
@@ -178,6 +171,12 @@ if [ "$API" -ge 26 ]; then
   done
 fi
 
+# cleaning
+FILE=$MODPATH/cleaner.sh
+if [ -f $FILE ]; then
+  . $FILE
+  mv -f $FILE $FILE\.txt
+fi
 
 
 

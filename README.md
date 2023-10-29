@@ -9,22 +9,24 @@
 - With this module, you can even normal install any non-system Miui app: https://apkmirror.com/apk/xiaomi-inc
 
 ## For Miui App Porter
-- You can declare these lines bellow in your app AndroidManifest.xml after `<application />` if you want to load classes and resources from this Miui Core:
-
-  `<uses-library android:name="com.miui.system" android:required="false" />`
-
-  `<uses-library android:name="com.miui.rom" android:required="false" />`
-
-  `<uses-library android:name="com.miui.core" android:required="false" />`
-  
-- Those libraries can even make your app crash in some ROMs caused by conflicted resources.
-- If com.miui.system library causes your app crashed, then use this line instead:
+- You can declare this line in your app AndroidManifest.xml after `<application />` if you want to load classes from this Miui Core:
 
   `<uses-library android:name="miui" android:required="false" />`
 
-- Do not do above if your app have it's own libraries!
+- You can declare this line if you want to load classes from this Miui Core and also resources from miuisystem.apk (causes crash in some ROMs):
+
+  `<uses-library android:name="com.miui.system" android:required="false" />`
+
+- You can declare this line if you want to load resources from framework-ext-res.apk (causes crash in some ROMs):
+
+  `<uses-library android:name="com.miui.rom" android:required="false" />`
+
+- You can declare this line if you want to load resources from miui.apk (causes crash in some ROMs):
+
+  `<uses-library android:name="com.miui.core" android:required="false" />`
+
 - Do not white list those libraries with your own Magisk Module /system/etc/permissions/ because there might be a conflict.
-- You don't need to declare all of those but just declare which is needed.
+- You don't need to declare all of those but just declare which is needed only.
 
 ## Sources
 - https://dumps.tadiphone.dev/dumps/xiaomi/cepheus cepheus-user-11-RKQ1.200826.002-V12.5.3.0.RFACNXM-release-keys
@@ -68,10 +70,11 @@
 - Android 13 Nusantara ROM, AOSP ROM, & CrDroid ROM
 
 ## Optionals
-- https://t.me/androidryukimodsdiscussions/60861
+- https://t.me/androidryukimodsdiscussions/54012
+- Global: https://t.me/androidryukimodsdiscussions/60861
 
 ## Troubleshootings
-- https://t.me/androidryukimodsdiscussions/29836
+- Global: https://t.me/androidryukimodsdiscussions/29836
 
 ## Support & Bug Report
 - https://t.me/androidryukimodsdiscussions/2618
