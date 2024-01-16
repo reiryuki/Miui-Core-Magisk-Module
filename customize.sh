@@ -59,8 +59,7 @@ if [ "$IS64BIT" == true ]; then
   else
     ui_print "- Doesn't support 32 bit library"
     rm -rf $MODPATH/armeabi-v7a $MODPATH/x86\
-     $MODPATH/system*/lib $MODPATH/system*/vendor/lib\
-     $MODPATH/system*/bin
+     $MODPATH/system*/lib $MODPATH/system*/vendor/lib
   fi
   ui_print " "
 else
