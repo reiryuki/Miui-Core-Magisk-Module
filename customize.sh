@@ -1,16 +1,23 @@
 # space
 ui_print " "
 
+# var
+UID=`id -u`
+LIST32BIT=`grep_get_prop ro.product.cpu.abilist32`
+if [ ! "$LIST32BIT" ]; then
+  LIST32BIT=`grep_get_prop ro.system.product.cpu.abilist32`
+fi
+
 # log
 if [ "$BOOTMODE" != true ]; then
-  FILE=/sdcard/$MODID\_recovery.log
+  FILE=/data/media/"$UID"/$MODID\_recovery.log
   ui_print "- Log will be saved at $FILE"
   exec 2>$FILE
   ui_print " "
 fi
 
 # optionals
-OPTIONALS=/sdcard/optionals.prop
+OPTIONALS=/data/media/"$UID"/optionals.prop
 if [ ! -f $OPTIONALS ]; then
   touch $OPTIONALS
 fi
@@ -20,12 +27,6 @@ if [ "`grep_prop debug.log $OPTIONALS`" == 1 ]; then
   ui_print "- The install log will contain detailed information"
   set -x
   ui_print " "
-fi
-
-# var
-LIST32BIT=`grep_get_prop ro.product.cpu.abilist32`
-if [ ! "$LIST32BIT" ]; then
-  LIST32BIT=`grep_get_prop ro.system.product.cpu.abilist32`
 fi
 
 # run
@@ -57,12 +58,15 @@ if [ "$IS64BIT" == true ]; then
     ui_print "- 32 bit library support"
   else
     ui_print "- Doesn't support 32 bit library"
-    rm -rf $MODPATH/system*/lib $MODPATH/system*/vendor/lib
+    rm -rf $MODPATH/armeabi-v7a $MODPATH/x86\
+     $MODPATH/system*/lib $MODPATH/system*/vendor/lib\
+     $MODPATH/system*/bin
   fi
   ui_print " "
 else
   ui_print "- 32 bit architecture"
-  rm -rf `find $MODPATH -type d -name *64*`
+  rm -rf `find $MODPATH -type d -name *64*`\
+   $MODPATH/system*/bin
   ui_print " "
 fi
 
@@ -86,23 +90,6 @@ magisk_setup
 
 # path
 SYSTEM=`realpath $MIRROR/system`
-if [ "$BOOTMODE" == true ]; then
-  if [ ! -d $MIRROR/vendor ]; then
-    mount_vendor_to_mirror
-  fi
-  if [ ! -d $MIRROR/product ]; then
-    mount_product_to_mirror
-  fi
-  if [ ! -d $MIRROR/system_ext ]; then
-    mount_system_ext_to_mirror
-  fi
-  if [ ! -d $MIRROR/odm ]; then
-    mount_odm_to_mirror
-  fi
-  if [ ! -d $MIRROR/my_product ]; then
-    mount_my_product_to_mirror
-  fi
-fi
 VENDOR=`realpath $MIRROR/vendor`
 PRODUCT=`realpath $MIRROR/product`
 SYSTEM_EXT=`realpath $MIRROR/system_ext`
@@ -118,6 +105,50 @@ if [ "`grep_prop sepolicy.sh $OPTIONALS`" == 1 ]\
 fi
 
 # function
+file_check_system() {
+for FILE in $FILES; do
+  DES=$SYSTEM$FILE
+  DES2=$SYSTEM_EXT$FILE
+  if [ -f $DES ] || [ -f $DES2 ]; then
+    ui_print "- Detected $FILE"
+    ui_print " "
+    rm -f $MODPATH/system$FILE
+  fi
+done
+}
+file_check_vendor() {
+for FILE in $FILES; do
+  DES=$VENDOR$FILE
+  DES2=$ODM$FILE
+  if [ -f $DES ] || [ -f $DES2 ]; then
+    ui_print "- Detected $FILE"
+    ui_print " "
+    rm -f $MODPATH/system/vendor$FILE
+  fi
+done
+}
+
+# check
+FILES=/bin/shelld
+file_check_system
+if [ "$IS64BIT" == true ]; then
+  LISTS=`ls $MODPATH/system/lib64`
+  FILES=`for LIST in $LISTS; do echo /lib64/$LIST; done`
+  file_check_system
+  LISTS=`ls $MODPATH/system/vendor/lib64`
+  FILES=`for LIST in $LISTS; do echo /lib64/$LIST; done`
+  file_check_vendor
+fi
+if [ "$LIST32BIT" ]; then
+  LISTS=`ls $MODPATH/system/lib`
+  FILES=`for LIST in $LISTS; do echo /lib/$LIST; done`
+  file_check_system
+  LISTS=`ls $MODPATH/system/vendor/lib`
+  FILES=`for LIST in $LISTS; do echo /lib/$LIST; done`
+  file_check_vendor
+fi
+
+# function
 check_function() {
 ui_print "- Checking"
 ui_print "$NAME"
@@ -125,42 +156,80 @@ ui_print "  function at"
 ui_print "$FILE"
 ui_print "  Please wait..."
 if ! grep -q $NAME $FILE; then
-  ui_print "  Using legacy libraries"
-  cp -rf $MODPATH/system_10/* $MODPATH/system
+  ui_print "  Function not found"
+  SYSTEM_10=true
 fi
 ui_print " "
 }
 
 # check
+SYSTEM_10=false
 NAME=_ZN7android23sp_report_stack_pointerEv
-DES=$MODPATH/system/bin/shelld
-LISTS=`strings $DES | grep ^lib | grep .so\
-        | sed -e 's|libshellservice.so||g' -e 's|libshell_jni.so||g'`
-FILE=`for LIST in $LISTS; do echo $SYSTEM/lib/$LIST; done`
-check_function
-if [ "$LIST32BIT" ]; then
-  DES="$MODPATH/system/lib/libexmedia.so
-        $MODPATH/system/lib/libmiuiblur.so
-        $MODPATH/system/lib/libshell.so
-        $MODPATH/system/vendor/lib/libcdsprpc.so"
-  LISTS=`strings $DES | grep ^lib | grep .so\
-          | sed -e 's|libexmedia.so||g' -e 's|libmiuiblur.so||g'\
-          -e 's|libshell.so||g' -e 's|libcdsprpc.so||g'\
-          -e 's|lib%s_skel.so||g'`
-  FILE=`for LIST in $LISTS; do echo $SYSTEM/lib/$LIST; done`
-  check_function
-fi
+unset LISTS
 if [ "$IS64BIT" == true ]; then
-  DES="$MODPATH/system/lib64/libexmedia.so
-        $MODPATH/system/lib64/libmiuiblur.so
-        $MODPATH/system/lib64/libshell.so
-        $MODPATH/system/vendor/lib64/libcdsprpc.so"
-  LISTS=`strings $DES | grep ^lib | grep .so\
-          | sed -e 's|libexmedia.so||g' -e 's|libmiuiblur.so||g'\
-          -e 's|libshell.so||g' -e 's|libcdsprpc.so||g'\
-          -e 's|lib%s_skel.so||g'`
-  FILE=`for LIST in $LISTS; do echo $SYSTEM/lib64/$LIST; done`
-  check_function
+  DES=$MODPATH/system/bin/shelld
+  if [ -f $DES ]; then
+    LISTS=`strings $DES | grep ^lib | grep .so\
+            | sed -e 's|libshellservice.so||g' -e 's|libshell_jni.so||g'`
+  fi
+  DES=$MODPATH/system/lib64/libexmedia.so
+  if [ -f $DES ]; then
+    LISTS="$LISTS `strings $DES | grep ^lib | grep .so\
+            | sed -e 's|libexmedia.so||g'`"
+  fi
+  DES=$MODPATH/system/lib64/libmiuiblur.so
+  if [ -f $DES ]; then
+    LISTS="$LISTS `strings $DES | grep ^lib | grep .so\
+            | sed -e 's|libmiuiblur.so||g'`"
+  fi
+  DES=$MODPATH/system/lib64/libshell.so
+  if [ -f $DES ]; then
+    LISTS="$LISTS `strings $DES | grep ^lib | grep .so\
+            | sed -e 's|libshell.so||g'`"
+  fi
+  DES=$MODPATH/system/vendor/lib64/libcdsprpc.so
+  if [ -f $DES ]; then
+    LISTS="$LISTS `strings $DES | grep ^lib | grep .so\
+            | sed -e 's|libcdsprpc.so||g' -e 's|lib%s_skel.so||g'`"
+  fi
+  if [ "$LISTS" ]; then
+    LISTS=`echo $LISTS | tr ' ' '\n' | sort | uniq`
+    FILE=`for LIST in $LISTS; do echo $SYSTEM/lib64/$LIST; done`
+    check_function
+  fi
+fi
+unset LISTS
+if [ "$LIST32BIT" ]; then
+  DES=$MODPATH/system/lib/libexmedia.so
+  if [ -f $DES ]; then
+    LISTS=`strings $DES | grep ^lib | grep .so\
+            | sed -e 's|libexmedia.so||g'`
+  fi
+  DES=$MODPATH/system/lib/libmiuiblur.so
+  if [ -f $DES ]; then
+    LISTS="$LISTS `strings $DES | grep ^lib | grep .so\
+           | sed -e 's|libmiuiblur.so||g'`"
+  fi
+  DES=$MODPATH/system/lib/libshell.so
+  if [ -f $DES ]; then
+    LISTS="$LISTS `strings $DES | grep ^lib | grep .so\
+           | sed -e 's|libshell.so||g'`"
+  fi
+  DES=$MODPATH/system/vendor/lib/libcdsprpc.so
+  if [ -f $DES ]; then
+    LISTS="$LISTS `strings $DES | grep ^lib | grep .so\
+            | sed -e 's|libcdsprpc.so||g' -e 's|lib%s_skel.so||g'`"
+  fi
+  if [ "$LISTS" ]; then
+    LISTS=`echo $LISTS | tr ' ' '\n' | sort | uniq`
+    FILE=`for LIST in $LISTS; do echo $SYSTEM/lib/$LIST; done`
+    check_function
+  fi
+fi
+if [ $SYSTEM_10 == true ]; then
+  ui_print "- Using legacy libraries"
+  cp -rf $MODPATH/system_10/* $MODPATH/system
+  ui_print " "
 fi
 rm -rf $MODPATH/system_10
 
@@ -269,55 +338,11 @@ fi
 # public
 FILE=$MODPATH/post-fs-data.sh
 if [ "`grep_prop miui.public $OPTIONALS`" != 0 ]; then
-  sed -i 's|#patch_public_libraries_nopreload|patch_public_libraries_nopreload|g' $FILE
+  sed -i 's|#p||g' $FILE
 else
-  ui_print "- Does not use public libraries nopreload mode"
+  ui_print "- Does not patch public.libraries.txt"
   ui_print "  You will not be able to normal install Miui apps"
   ui_print " "
-fi
-
-# function
-file_check_system() {
-for FILE in $FILES; do
-  DES=$SYSTEM$FILE
-  DES2=$SYSTEM_EXT$FILE
-  if [ -f $DES ] || [ -f $DES2 ]; then
-    ui_print "- Detected $FILE"
-    ui_print " "
-    rm -f $MODPATH/system$FILE
-  fi
-done
-}
-file_check_vendor() {
-for FILE in $FILES; do
-  DES=$VENDOR$FILE
-  DES2=$ODM$FILE
-  if [ -f $DES ] || [ -f $DES2 ]; then
-    ui_print "- Detected $FILE"
-    ui_print " "
-    rm -f $MODPATH/system/vendor$FILE
-  fi
-done
-}
-
-# check
-FILES=/bin/shelld
-file_check_system
-if [ "$LIST32BIT" ]; then
-  LISTS=`ls $MODPATH/system/lib`
-  FILES=`for LIST in $LISTS; do echo /lib/$LIST; done`
-  file_check_system
-  LISTS=`ls $MODPATH/system/vendor/lib`
-  FILES=`for LIST in $LISTS; do echo /lib/$LIST; done`
-  file_check_vendor
-fi
-if [ "$IS64BIT" == true ]; then
-  LISTS=`ls $MODPATH/system/lib64`
-  FILES=`for LIST in $LISTS; do echo /lib64/$LIST; done`
-  file_check_system
-  LISTS=`ls $MODPATH/system/vendor/lib64`
-  FILES=`for LIST in $LISTS; do echo /lib64/$LIST; done`
-  file_check_vendor
 fi
 
 # media
@@ -332,9 +357,7 @@ elif [ ! -d /product/media ] && [ ! -d /system/media ]; then
 fi
 
 # unmount
-if [ "$BOOTMODE" == true ] && [ ! "$MAGISKPATH" ]; then
-  unmount_mirror
-fi
+unmount_mirror
 
 
 

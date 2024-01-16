@@ -47,31 +47,26 @@ FILE=$MODPATH/sepolicy.pfsd
 sepolicy_sh
 
 # list
-(
 PKGS="`cat $MODPATH/package.txt`
        com.miui.rom:ui"
 for PKG in $PKGS; do
-  magisk --denylist rm $PKG
-  magisk --sulist add $PKG
+  magisk --denylist rm $PKG 2>/dev/null
+  magisk --sulist add $PKG 2>/dev/null
 done
-FILE=$MODPATH/tmp_file
-magisk --hide sulist 2>$FILE
-if [ "`cat $FILE`" == 'SuList is enforced' ]; then
+if magisk magiskhide sulist; then
   for PKG in $PKGS; do
-    magisk --hide add $PKG
+    magisk magiskhide add $PKG
   done
 else
   for PKG in $PKGS; do
-    magisk --hide rm $PKG
+    magisk magiskhide rm $PKG
   done
 fi
-rm -f $FILE
-) 2>/dev/null
 
 # property
 PROP=`getprop ro.build.characteristics`
 if [ ! "$PROP" ]; then
-  resetprop ro.build.characteristics default
+  resetprop -n ro.build.characteristics default
 fi
 
 # property
@@ -80,7 +75,7 @@ MODEL=`getprop ro.product.model`
 if [ "$DEVICE" == cancro ]; then
   if ! echo "$MODEL" | grep "MI 3"\
   && ! echo "$MODEL" | grep "MI 4"; then
-    resetprop ro.product.model "MI 4"
+    resetprop -n ro.product.model "MI 4"
   fi
 fi
 
@@ -148,17 +143,17 @@ NAMES="libnativehelper.so libnativeloader.so libcutils.so
        libutils.so libc++.so libandroidfw.so libui.so
        libandroid_runtime.so libbinder.so"
 FILE=$MODETC/$DES
-cp -af $ETC/$DES $MODETC
-patch_public_libraries
+#pcp -af $ETC/$DES $MODETC
+#ppatch_public_libraries
 NAMES="libmiuiblursdk.so libmiuinative.so libmiuiblur.so
        libthemeutils_jni.so libshell_jni.so libshell.so libmiuixlog.so
        libimage_arcsoft_4plus.so libstlport_shared.so"
-#patch_public_libraries_nopreload
+#ppatch_public_libraries_nopreload
 NAMES="libcdsprpc.so libadsprpc.so libOpenCL.so
        libarcsoft_beautyshot.so libmpbase.so"
 FILE=$MODVETC/$DES
-cp -af $VETC/$DES $MODVETC
-patch_public_libraries
+#pcp -af $VETC/$DES $MODVETC
+#ppatch_public_libraries
 if [ "$API" -ge 26 ]; then
   chcon u:object_r:vendor_configs_file:s0 $FILE
   for NAME in $NAMES; do

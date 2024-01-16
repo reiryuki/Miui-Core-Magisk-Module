@@ -10,30 +10,63 @@ done
 }
 mount_partitions_in_recovery() {
 if [ "$BOOTMODE" != true ]; then
-  DIR=/dev/block/bootdevice/by-name
-  DIR2=/dev/block/mapper
-  mount -o rw -t auto $DIR/vendor$SLOT /vendor\
-  || mount -o rw -t auto $DIR2/vendor$SLOT /vendor\
-  || mount -o rw -t auto $DIR/cust /vendor\
-  || mount -o rw -t auto $DIR2/cust /vendor
-  mount -o rw -t auto $DIR/product$SLOT /product\
-  || mount -o rw -t auto $DIR2/product$SLOT /product
-  mount -o rw -t auto $DIR/system_ext$SLOT /system_ext\
-  || mount -o rw -t auto $DIR2/system_ext$SLOT /system_ext
-  mount -o rw -t auto $DIR/odm$SLOT /odm\
-  || mount -o rw -t auto $DIR2/odm$SLOT /odm
-  mount -o rw -t auto $DIR/my_product /my_product\
-  || mount -o rw -t auto $DIR2/my_product /my_product
-  mount -o rw -t auto $DIR/userdata /data\
-  || mount -o rw -t auto $DIR2/userdata /data
-  mount -o rw -t auto $DIR/cache /cache\
-  || mount -o rw -t auto $DIR2/cache /cache
-  mount -o rw -t auto $DIR/persist /persist\
-  || mount -o rw -t auto $DIR2/persist /persist
-  mount -o rw -t auto $DIR/metadata /metadata\
-  || mount -o rw -t auto $DIR2/metadata /metadata
-  mount -o rw -t auto $DIR/cust /cust\
-  || mount -o rw -t auto $DIR2/cust /cust
+  BLOCK=/dev/block/bootdevice/by-name
+  BLOCK2=/dev/block/mapper
+  ui_print "- Recommended to mount all partitions first"
+  ui_print "  before installing this module"
+  ui_print " "
+  DIR=/vendor
+  if [ -d $DIR ] && ! is_mounted $DIR; then
+    mount -o rw -t auto $BLOCK$DIR$SLOT $DIR\
+    || mount -o rw -t auto $BLOCK2$DIR$SLOT $DIR\
+    || mount -o rw -t auto $BLOCK/cust $DIR\
+    || mount -o rw -t auto $BLOCK2/cust $DIR
+  fi
+  DIR=/product
+  if [ -d $DIR ] && ! is_mounted $DIR; then
+    mount -o rw -t auto $BLOCK$DIR$SLOT $DIR\
+    || mount -o rw -t auto $BLOCK2$DIR$SLOT $DIR
+  fi
+  DIR=/system_ext
+  if [ -d $DIR ] && ! is_mounted $DIR; then
+    mount -o rw -t auto $BLOCK$DIR$SLOT $DIR\
+    || mount -o rw -t auto $BLOCK2$DIR$SLOT $DIR
+  fi
+  DIR=/odm
+  if [ -d $DIR ] && ! is_mounted $DIR; then
+    mount -o rw -t auto $BLOCK$DIR$SLOT $DIR\
+    || mount -o rw -t auto $BLOCK2$DIR$SLOT $DIR
+  fi
+  DIR=/my_product
+  if [ -d $DIR ] && ! is_mounted $DIR; then
+    mount -o rw -t auto $BLOCK$DIR $DIR\
+    || mount -o rw -t auto $BLOCK2$DIR $DIR
+  fi
+  DIR=/data
+  if [ -d $DIR ] && ! is_mounted $DIR; then
+    mount -o rw -t auto $BLOCK/userdata $DIR\
+    || mount -o rw -t auto $BLOCK2/userdata $DIR
+  fi
+  DIR=/cache
+  if [ -d $DIR ] && ! is_mounted $DIR; then
+    mount -o rw -t auto $BLOCK$DIR $DIR\
+    || mount -o rw -t auto $BLOCK2$DIR $DIR
+  fi
+  DIR=/persist
+  if [ -d $DIR ] && ! is_mounted $DIR; then
+    mount -o rw -t auto $BLOCK$DIR $DIR\
+    || mount -o rw -t auto $BLOCK2$DIR $DIR
+  fi
+  DIR=/metadata
+  if [ -d $DIR ] && ! is_mounted $DIR; then
+    mount -o rw -t auto $BLOCK$DIR $DIR\
+    || mount -o rw -t auto $BLOCK2$DIR $DIR
+  fi
+  DIR=/cust
+  if [ -d $DIR ] && ! is_mounted $DIR; then
+    mount -o rw -t auto $BLOCK$DIR $DIR\
+    || mount -o rw -t auto $BLOCK2$DIR $DIR
+  fi
 fi
 }
 get_device() {
@@ -48,7 +81,7 @@ mknod /dev/$RAN b `get_device "$1"; echo $DEV`
 if mount -t ext4 -o ro /dev/$RAN "$2"\
 || mount -t erofs -o ro /dev/$RAN "$2"\
 || mount -t f2fs -o ro /dev/$RAN "$2"\
-|| mount -t ubifs -o ro /dev/$RAN "$2"; then
+|| mount -t auto -o ro /dev/$RAN "$2"; then
   blockdev --setrw /dev/$RAN
   rm -f /dev/$RAN
   return 0
@@ -57,17 +90,54 @@ rm -f /dev/$RAN
 return 1
 }
 unmount_mirror() {
-DIRS="$MIRROR/system_root $MIRROR/system $MIRROR/vendor
-      $MIRROR/product $MIRROR/system_ext $MIRROR/odm
-      $MIRROR/my_product $MIRROR"
-for DIR in $DIRS; do
-  umount $DIR
+if [ "$BOOTMODE" == true ]\
+&& [ "$HASMIRROR" == false ]; then
+  FOLDS="$MIRROR/* $MIRROR"
+  for FOLD in $FOLDS; do
+    umount $FOLD
+  done
+  rm -rf $MIRROR/*
+fi
+}
+remount_partitions() {
+PARS="/ /system /vendor /product /system_ext /odm /my_product"
+for PAR in $PARS; do
+  mount -o ro,remount $PAR
 done
+}
+mount_system_to_mirror() {
+DIR=/system
+if [ ! -d $MIRROR$DIR ]; then
+  HASMIRROR=false
+  remount_partitions
+  unmount_mirror
+  ui_print "- Mounting $MIRROR$DIR..."
+  if [ "$SYSTEM_ROOT" == true ]\
+  || [ "$SYSTEM_AS_ROOT" == true ]; then
+    mkdir -p $MIRROR/system_root
+    if mount_mirror / $MIRROR/system_root; then
+      rm -rf $MIRROR$DIR
+      ln -sf $MIRROR/system_root$DIR $MIRROR
+    else
+      ui_print "  ! Failed"
+      rm -rf $MIRROR/system_root
+    fi
+  else
+    mkdir -p $MIRROR$DIR
+    if ! mount_mirror $DIR $MIRROR$DIR; then
+      ui_print "  ! Failed"
+      rm -rf $MIRROR$DIR
+    fi
+  fi
+  ui_print " "
+else
+  HASMIRROR=true
+fi
 }
 mount_vendor_to_mirror() {
 DIR=/vendor
-if [ -d $DIR ]; then
-  ui_print "- Mount $MIRROR$DIR..."
+if [ -d $DIR ] && [ ! -d $MIRROR$DIR ]; then
+  ui_print "- Mounting $MIRROR$DIR..."
   mkdir -p $MIRROR$DIR
   if ! mount_mirror $DIR $MIRROR$DIR; then
     ui_print "  Creating symlink instead"
@@ -79,8 +149,8 @@ fi
 }
 mount_product_to_mirror() {
 DIR=/product
-if [ -d $DIR ]; then
-  ui_print "- Mount $MIRROR$DIR..."
+if [ -d $DIR ] && [ ! -d $MIRROR$DIR ]; then
+  ui_print "- Mounting $MIRROR$DIR..."
   mkdir -p $MIRROR$DIR
   if ! mount_mirror $DIR $MIRROR$DIR; then
     ui_print "  Creating symlink instead"
@@ -92,8 +162,8 @@ fi
 }
 mount_system_ext_to_mirror() {
 DIR=/system_ext
-if [ -d $DIR ]; then
-  ui_print "- Mount $MIRROR$DIR..."
+if [ -d $DIR ] && [ ! -d $MIRROR$DIR ]; then
+  ui_print "- Mounting $MIRROR$DIR..."
   mkdir -p $MIRROR$DIR
   if ! mount_mirror $DIR $MIRROR$DIR; then
     ui_print "  Creating symlink instead"
@@ -107,8 +177,8 @@ fi
 }
 mount_odm_to_mirror() {
 DIR=/odm
-if [ -d $DIR ]; then
-  ui_print "- Mount $MIRROR$DIR..."
+if [ -d $DIR ] && [ ! -d $MIRROR$DIR ]; then
+  ui_print "- Mounting $MIRROR$DIR..."
   mkdir -p $MIRROR$DIR
   if ! mount_mirror $DIR $MIRROR$DIR; then
     ui_print "  Creating symlink instead"
@@ -126,8 +196,8 @@ fi
 }
 mount_my_product_to_mirror() {
 DIR=/my_product
-if [ -d $DIR ]; then
-  ui_print "- Mount $MIRROR$DIR..."
+if [ -d $DIR ] && [ ! -d $MIRROR$DIR ]; then
+  ui_print "- Mounting $MIRROR$DIR..."
   mkdir -p $MIRROR$DIR
   if ! mount_mirror $DIR $MIRROR$DIR; then
     ui_print "  Creating symlink instead"
@@ -140,28 +210,7 @@ if [ -d $DIR ]; then
 fi
 }
 mount_partitions_to_mirror() {
-unmount_mirror
-if [ "$SYSTEM_ROOT" == true ]; then
-  DIR=/system_root
-  ui_print "- Mount $MIRROR$DIR..."
-  mkdir -p $MIRROR$DIR
-  if mount_mirror / $MIRROR$DIR; then
-    rm -rf $MIRROR/system
-    ln -sf $MIRROR$DIR/system $MIRROR
-  else
-    ui_print "  ! Failed"
-    rm -rf $MIRROR$DIR
-  fi
-else
-  DIR=/system
-  ui_print "- Mount $MIRROR$DIR..."
-  mkdir -p $MIRROR$DIR
-  if ! mount_mirror $DIR $MIRROR$DIR; then
-    ui_print "  ! Failed"
-    rm -rf $MIRROR$DIR
-  fi
-fi
-ui_print " "
+mount_system_to_mirror
 mount_vendor_to_mirror
 mount_product_to_mirror
 mount_system_ext_to_mirror
@@ -169,18 +218,18 @@ mount_odm_to_mirror
 mount_my_product_to_mirror
 }
 magisk_setup() {
-MAGISKPATH=`magisk --path`
+MAGISKTMP=`magisk --path`
 if [ "$BOOTMODE" == true ]; then
-  if [ "$MAGISKPATH" ]; then
-    mount -o rw,remount $MAGISKPATH
-    MAGISKTMP=$MAGISKPATH/.magisk
-    MIRROR=$MAGISKTMP/mirror
-  else
-    MAGISKTMP=/mnt
+  if [ "$MAGISKTMP" ]; then
     mount -o rw,remount $MAGISKTMP
-    MIRROR=$MAGISKTMP/mirror
-    mount_partitions_to_mirror
+    INTERNALDIR=$MAGISKTMP/.magisk
+    MIRROR=$INTERNALDIR/mirror
+  else
+    INTERNALDIR=/mnt
+    mount -o rw,remount $INTERNALDIR
+    MIRROR=$INTERNALDIR/mirror
   fi
+  mount_partitions_to_mirror
 fi
 }
 remove_sepolicy_rule() {

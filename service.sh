@@ -8,10 +8,20 @@ set -x
 API=`getprop ro.build.version.sdk`
 
 # run
-SERVICE=shelld
-if ! pidof $SERVICE; then
-  $SERVICE &
-  PID=`pidof $SERVICE`
+SNAME=shelld
+SERVICE=/system/bin/$SNAME
+if ! pidof $SNAME && [ -f $SERVICE ]; then
+  if ! stat -c %a $SERVICE | grep -E '755|775|777|757'; then
+    mount -o remount,rw $SERVICE
+    chmod 0755 $SERVICE
+  fi
+  if [ "$API" -ge 26 ]\
+  && [ "`stat -c %u.%g $SERVICE`" != 0.2000 ]; then
+    mount -o remount,rw $SERVICE
+    chown 0.2000 $SERVICE
+  fi
+  $SNAME &
+  PID=`pidof $SNAME`
 fi
 
 # wait
@@ -52,7 +62,7 @@ if [ "$API" -ge 31 ]; then
 fi
 PKGOPS=`appops get $PKG`
 UID=`dumpsys package $PKG 2>/dev/null | grep -m 1 userId= | sed 's|    userId=||g'`
-if [ "$UID" -gt 9999 ]; then
+if [ "$UID" ] && [ "$UID" -gt 9999 ]; then
   appops set --uid "$UID" LEGACY_STORAGE allow
   if [ "$API" -ge 29 ]; then
     appops set --uid "$UID" ACCESS_MEDIA_LOCATION allow
@@ -68,7 +78,7 @@ if [ "$API" -ge 30 ]; then
 fi
 PKGOPS=`appops get $PKG`
 UID=`dumpsys package $PKG 2>/dev/null | grep -m 1 userId= | sed 's|    userId=||g'`
-if [ "$UID" -gt 9999 ]; then
+if [ "$UID" ] && [ "$UID" -gt 9999 ]; then
   UIDOPS=`appops get --uid "$UID"`
 fi
 
@@ -79,7 +89,7 @@ if [ "$API" -ge 30 ]; then
 fi
 PKGOPS=`appops get $PKG`
 UID=`dumpsys package $PKG 2>/dev/null | grep -m 1 userId= | sed 's|    userId=||g'`
-if [ "$UID" -gt 9999 ]; then
+if [ "$UID" ] && [ "$UID" -gt 9999 ]; then
   UIDOPS=`appops get --uid "$UID"`
 fi
 
@@ -95,14 +105,14 @@ if [ "$API" -ge 30 ]; then
 fi
 PKGOPS=`appops get $PKG`
 UID=`dumpsys package $PKG 2>/dev/null | grep -m 1 userId= | sed 's|    userId=||g'`
-if [ "$UID" -gt 9999 ]; then
+if [ "$UID" ] && [ "$UID" -gt 9999 ]; then
   UIDOPS=`appops get --uid "$UID"`
 fi
 
 # check
-if ! pidof $SERVICE; then
-  $SERVICE &
-  PID=`pidof $SERVICE`
+if ! pidof $SNAME && [ -f $SERVICE ]; then
+  $SNAME &
+  PID=`pidof $SNAME`
 fi
 
 
