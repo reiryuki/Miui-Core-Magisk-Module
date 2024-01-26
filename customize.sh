@@ -164,63 +164,69 @@ ui_print " "
 # check
 SYSTEM_10=false
 NAME=_ZN7android23sp_report_stack_pointerEv
-unset LISTS
 if [ "$IS64BIT" == true ]; then
   DES=$MODPATH/system/bin/shelld
   if [ -f $DES ]; then
     LISTS=`strings $DES | grep ^lib | grep .so\
             | sed -e 's|libshellservice.so||g' -e 's|libshell_jni.so||g'`
+    FILE=`for LIST in $LISTS; do echo $SYSTEM/lib64/$LIST; done`
+    check_function
   fi
   DES=$MODPATH/system/lib64/libexmedia.so
-  if [ -f $DES ]; then
-    LISTS="$LISTS `strings $DES | grep ^lib | grep .so\
-            | sed -e 's|libexmedia.so||g'`"
+  if [ -f $DES ] && [ $SYSTEM_10 != true ]; then
+    LISTS=`strings $DES | grep ^lib | grep .so\
+            | sed -e 's|libexmedia.so||g'`
+    FILE=`for LIST in $LISTS; do echo $SYSTEM/lib64/$LIST; done`
+    check_function
   fi
   DES=$MODPATH/system/lib64/libmiuiblur.so
-  if [ -f $DES ]; then
-    LISTS="$LISTS `strings $DES | grep ^lib | grep .so\
-            | sed -e 's|libmiuiblur.so||g'`"
+  if [ -f $DES ] && [ $SYSTEM_10 != true ]; then
+    LISTS=`strings $DES | grep ^lib | grep .so\
+            | sed -e 's|libmiuiblur.so||g'`
+    FILE=`for LIST in $LISTS; do echo $SYSTEM/lib64/$LIST; done`
+    check_function
   fi
   DES=$MODPATH/system/lib64/libshell.so
-  if [ -f $DES ]; then
-    LISTS="$LISTS `strings $DES | grep ^lib | grep .so\
-            | sed -e 's|libshell.so||g'`"
+  if [ -f $DES ] && [ $SYSTEM_10 != true ]; then
+    LISTS=`strings $DES | grep ^lib | grep .so\
+            | sed -e 's|libshell.so||g'`
+    FILE=`for LIST in $LISTS; do echo $SYSTEM/lib64/$LIST; done`
+    check_function
   fi
   DES=$MODPATH/system/vendor/lib64/libcdsprpc.so
-  if [ -f $DES ]; then
-    LISTS="$LISTS `strings $DES | grep ^lib | grep .so\
-            | sed -e 's|libcdsprpc.so||g' -e 's|lib%s_skel.so||g'`"
-  fi
-  if [ "$LISTS" ]; then
-    LISTS=`echo $LISTS | tr ' ' '\n' | sort | uniq`
+  if [ -f $DES ] && [ $SYSTEM_10 != true ]; then
+    LISTS=`strings $DES | grep ^lib | grep .so\
+            | sed -e 's|libcdsprpc.so||g' -e 's|lib%s_skel.so||g'`
     FILE=`for LIST in $LISTS; do echo $SYSTEM/lib64/$LIST; done`
     check_function
   fi
 fi
-unset LISTS
 if [ "$LIST32BIT" ]; then
   DES=$MODPATH/system/lib/libexmedia.so
-  if [ -f $DES ]; then
+  if [ -f $DES ] && [ $SYSTEM_10 != true ]; then
     LISTS=`strings $DES | grep ^lib | grep .so\
             | sed -e 's|libexmedia.so||g'`
+    FILE=`for LIST in $LISTS; do echo $SYSTEM/lib/$LIST; done`
+    check_function
   fi
   DES=$MODPATH/system/lib/libmiuiblur.so
-  if [ -f $DES ]; then
-    LISTS="$LISTS `strings $DES | grep ^lib | grep .so\
-           | sed -e 's|libmiuiblur.so||g'`"
+  if [ -f $DES ] && [ $SYSTEM_10 != true ]; then
+    LISTS=`strings $DES | grep ^lib | grep .so\
+           | sed -e 's|libmiuiblur.so||g'`
+    FILE=`for LIST in $LISTS; do echo $SYSTEM/lib/$LIST; done`
+    check_function
   fi
   DES=$MODPATH/system/lib/libshell.so
-  if [ -f $DES ]; then
-    LISTS="$LISTS `strings $DES | grep ^lib | grep .so\
-           | sed -e 's|libshell.so||g'`"
+  if [ -f $DES ] && [ $SYSTEM_10 != true ]; then
+    LISTS=`strings $DES | grep ^lib | grep .so\
+           | sed -e 's|libshell.so||g'`
+    FILE=`for LIST in $LISTS; do echo $SYSTEM/lib/$LIST; done`
+    check_function
   fi
   DES=$MODPATH/system/vendor/lib/libcdsprpc.so
-  if [ -f $DES ]; then
-    LISTS="$LISTS `strings $DES | grep ^lib | grep .so\
-            | sed -e 's|libcdsprpc.so||g' -e 's|lib%s_skel.so||g'`"
-  fi
-  if [ "$LISTS" ]; then
-    LISTS=`echo $LISTS | tr ' ' '\n' | sort | uniq`
+  if [ -f $DES ] && [ $SYSTEM_10 != true ]; then
+    LISTS=`strings $DES | grep ^lib | grep .so\
+            | sed -e 's|libcdsprpc.so||g' -e 's|lib%s_skel.so||g'`
     FILE=`for LIST in $LISTS; do echo $SYSTEM/lib/$LIST; done`
     check_function
   fi
