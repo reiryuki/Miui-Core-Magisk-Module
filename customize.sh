@@ -74,7 +74,7 @@ NUM=21
 if [ "$API" -lt $NUM ]; then
   ui_print "! Unsupported SDK $API."
   ui_print "  You have to upgrade your Android version"
-  ui_print "  at least SDK API $NUM to use this module."
+  ui_print "  at least SDK $NUM to use this module."
   abort
 else
   ui_print "- SDK $API"

@@ -142,7 +142,9 @@ if [ -d $DIR ] && [ ! -d $MIRROR$DIR ]; then
   if ! mount_mirror $DIR $MIRROR$DIR; then
     ui_print "  Creating symlink instead"
     rm -rf $MIRROR$DIR
-    ln -sf $MIRROR/system$DIR $MIRROR
+    if [ -d $MIRROR/system$DIR ]; then
+      ln -sf $MIRROR/system$DIR $MIRROR
+    fi
   fi
   ui_print " "
 fi
@@ -155,7 +157,9 @@ if [ -d $DIR ] && [ ! -d $MIRROR$DIR ]; then
   if ! mount_mirror $DIR $MIRROR$DIR; then
     ui_print "  Creating symlink instead"
     rm -rf $MIRROR$DIR
-    ln -sf $MIRROR/system$DIR $MIRROR
+    if [ -d $MIRROR/system$DIR ]; then
+      ln -sf $MIRROR/system$DIR $MIRROR
+    fi
   fi
   ui_print " "
 fi
