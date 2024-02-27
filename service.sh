@@ -7,6 +7,12 @@ set -x
 # var
 API=`getprop ro.build.version.sdk`
 
+# prop
+PROP=`getprop ro.product.device`
+resetprop --delete ro.product.mod_device
+#resetprop -n ro.product.mod_device "$PROP"_global
+resetprop -n ro.miui.ui.version.code 14
+
 # run
 SNAME=shelld
 SERVICE=/system/bin/$SNAME

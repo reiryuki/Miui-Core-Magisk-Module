@@ -5,7 +5,7 @@
 - The MIT license specified here is for the Magisk Module only, not for Miui apps and blobs.
 
 ## Descriptions
-- System core framework library of Miui ROM ported from Xiaomi Mi 9 (cepheus) as a dependency of any Miui app and Miui Magisk Module
+- System core framework library of Miui ROM ported from Xiaomi Mi 9 (cepheus) as a dependency of any Miui Magisk Modules
 - With this module, you can even normal install any non-system Miui apps: https://apkmirror.com/apk/xiaomi-inc
 
 ## For Miui App Porter
@@ -49,9 +49,9 @@
 
 ## Installation Guide & Download Link
 - Install this module https://www.pling.com/p/1537512/ via Magisk app or KernelSU app or Recovery if Magisk installed
-- Install any Miui app or Miui Magisk Module which depends on this module
+- Install any Miui Magisk Module which depends on this module
 - Reboot
-- If you are using KernelSU, you need to allow superuser list manually all package name listed in package.txt (enable show system apps) and reboot after
+- If you are using KernelSU, you need to allow superuser list manually all package name listed in package.txt (enable show system apps) and reboot afterwards
 
 ## Miui Magisk Modules Available
 - https://github.com/reiryuki/Mi-Music-Magisk-Module

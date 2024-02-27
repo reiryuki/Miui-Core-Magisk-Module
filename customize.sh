@@ -350,6 +350,24 @@ else
   ui_print " "
 fi
 
+# global
+FILE=$MODPATH/service.sh
+NAME=ro.product.mod_device
+if [ "`grep_prop miui.global $OPTIONALS`" == 1 ]; then
+  ui_print "- Global mode"
+  sed -i "s|#resetprop -n $NAME|resetprop -n $NAME|g" $FILE
+  ui_print " "
+fi
+
+# code
+FILE=$MODPATH/service.sh
+NAME=ro.miui.ui.version.code
+if [ "`grep_prop miui.code $OPTIONALS`" == 0 ]; then
+  ui_print "- Removing $NAME..."
+  sed -i "s|resetprop -n $NAME|#resetprop -n $NAME|g" $FILE
+  ui_print " "
+fi
+
 # media
 if [ ! -d /product/media ] && [ -d /system/media ]; then
   ui_print "- Using /system/media instead of /product/media"
