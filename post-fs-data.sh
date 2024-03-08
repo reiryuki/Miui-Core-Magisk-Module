@@ -8,6 +8,7 @@ set -x
 # var
 API=`getprop ro.build.version.sdk`
 ABI=`getprop ro.product.cpu.abi`
+LIST32BIT=`getprop ro.product.cpu.abilist32`
 
 # function
 permissive() {
@@ -122,7 +123,11 @@ fi
 patch_public_libraries() {
 for NAME in $NAMES; do
   if ! grep $NAME $FILE; then
-    echo $NAME >> $FILE
+    if echo "$ABI" | grep 64 && [ ! "$LIST32BIT" ]; then
+      echo "$NAME 64" >> $FILE
+    else
+      echo $NAME >> $FILE
+    fi
   fi
 done
 chmod 0644 $FILE
@@ -130,7 +135,11 @@ chmod 0644 $FILE
 patch_public_libraries_nopreload() {
 for NAME in $NAMES; do
   if ! grep $NAME $FILE; then
-    echo "$NAME nopreload" >> $FILE
+    if echo "$ABI" | grep 64 && [ ! "$LIST32BIT" ]; then
+      echo "$NAME 64 nopreload" >> $FILE
+    else
+      echo "$NAME nopreload" >> $FILE
+    fi
   fi
 done
 chmod 0644 $FILE
@@ -145,9 +154,9 @@ NAMES="libnativehelper.so libnativeloader.so libcutils.so
 FILE=$MODETC/$DES
 #pcp -af $ETC/$DES $MODETC
 #ppatch_public_libraries
-NAMES="libmiuiblursdk.so libmiuinative.so libmiuiblur.so
-       libthemeutils_jni.so libshell_jni.so libshell.so libmiuixlog.so
-       libimage_arcsoft_4plus.so libstlport_shared.so"
+NAMES="libmiui_runtime.so libmiuiblursdk.so libmiuinative.so
+       libmiuiblur.so libthemeutils_jni.so libshell_jni.so libshell.so
+       libmiuixlog.so libimage_arcsoft_4plus.so libstlport_shared.so"
 #ppatch_public_libraries_nopreload
 NAMES="libcdsprpc.so libadsprpc.so libOpenCL.so
        libarcsoft_beautyshot.so libmpbase.so"

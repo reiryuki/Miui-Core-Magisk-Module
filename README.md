@@ -60,6 +60,7 @@
 - https://github.com/reiryuki/Miui-Screen-Recorder-Magisk-Module
 - https://github.com/reiryuki/Miui-Security-Center-Magisk-Module
 - https://github.com/reiryuki/Miui-Home-Magisk-Module
+- https://github.com/reiryuki/Miui-App-Vault-Magisk-Module
 - https://github.com/reiryuki/Miui-Clock-Magisk-Module
 - https://github.com/iamr0s/MiShare-Magisk-Module
 
