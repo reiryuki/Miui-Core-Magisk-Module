@@ -12,6 +12,9 @@ PROP=`getprop ro.product.device`
 resetprop --delete ro.product.mod_device
 #resetprop -n ro.product.mod_device "$PROP"_global
 resetprop -n ro.miui.ui.version.code 14
+resetprop -n ro.config.miui_magic_window_enable true
+resetprop -n ro.config.miui_multiwindow_optimization true
+resetprop -n ro.config.miui_multi_window_switch_enable true
 
 # run
 SNAME=shelld
