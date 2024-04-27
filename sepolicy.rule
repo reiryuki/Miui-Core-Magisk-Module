@@ -8,8 +8,8 @@ allow init { system_file system_lib_file vendor_file vendor_configs_file } { dir
 allow init same_process_hal_file file relabelfrom
 
 # file
-allow { system_app priv_app platform_app untrusted_app_30 untrusted_app_29 untrusted_app_27 untrusted_app } { vendor_audio_prop vendor_display_prop } file { read open getattr map }
-allow { system_app priv_app platform_app untrusted_app_30 untrusted_app_29 untrusted_app_27 untrusted_app } vendor_displayfeature_prop file read
-allow { system_app priv_app platform_app untrusted_app_30 untrusted_app_29 untrusted_app_27 untrusted_app } cgroup file write
+allow { system_app priv_app platform_app untrusted_app_29 untrusted_app_27 untrusted_app } { vendor_audio_prop vendor_display_prop } file { read open getattr map }
+allow { system_app priv_app platform_app untrusted_app_29 untrusted_app_27 untrusted_app } vendor_displayfeature_prop file read
+allow { system_app priv_app platform_app untrusted_app_29 untrusted_app_27 untrusted_app } cgroup file write
 
 

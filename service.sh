@@ -17,26 +17,45 @@ resetprop -n ro.config.miui_multiwindow_optimization true
 resetprop -n ro.config.miui_multi_window_switch_enable true
 
 # run
-SNAME=shelld
-SERVICE=/system/bin/$SNAME
-if ! pidof $SNAME && [ -f $SERVICE ]; then
-  if ! stat -c %a $SERVICE | grep -E '755|775|777|757'; then
-    mount -o remount,rw $SERVICE
-    chmod 0755 $SERVICE
+NAMES="shelld miuibooster"
+for NAME in $NAMES; do
+  SERVICE=/system/bin/$NAME
+  if ! pidof $NAME && [ -f $SERVICE ]; then
+    if ! stat -c %a $SERVICE | grep -E '755|775|777|757'; then
+      mount -o remount,rw $SERVICE
+      chmod 0755 $SERVICE
+    fi
+    if [ "$API" -ge 26 ]\
+    && [ "`stat -c %u.%g $SERVICE`" != 0.2000 ]; then
+      mount -o remount,rw $SERVICE
+      chown 0.2000 $SERVICE
+    fi
+    $NAME &
+    PID=`pidof $NAME`
   fi
-  if [ "$API" -ge 26 ]\
-  && [ "`stat -c %u.%g $SERVICE`" != 0.2000 ]; then
-    mount -o remount,rw $SERVICE
-    chown 0.2000 $SERVICE
-  fi
-  $SNAME &
-  PID=`pidof $SNAME`
-fi
+done
 
 # wait
 until [ "`getprop sys.boot_completed`" == 1 ]; do
   sleep 10
 done
+
+# list
+PKGS="`cat $MODPATH/package.txt`
+       com.miui.rom:ui"
+for PKG in $PKGS; do
+  magisk --denylist rm $PKG 2>/dev/null
+  magisk --sulist add $PKG 2>/dev/null
+done
+if magisk magiskhide sulist; then
+  for PKG in $PKGS; do
+    magisk magiskhide add $PKG
+  done
+else
+  for PKG in $PKGS; do
+    magisk magiskhide rm $PKG
+  done
+fi
 
 # function
 grant_permission() {
@@ -127,10 +146,12 @@ if [ "$UID" ] && [ "$UID" -gt 9999 ]; then
 fi
 
 # check
-if ! pidof $SNAME && [ -f $SERVICE ]; then
-  $SNAME &
-  PID=`pidof $SNAME`
-fi
+for NAME in $NAMES; do
+  if ! pidof $NAME && [ -f $SERVICE ]; then
+    $NAME &
+    PID=`pidof $NAME`
+  fi
+done
 
 
 

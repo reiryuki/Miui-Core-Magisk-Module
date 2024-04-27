@@ -128,7 +128,7 @@ done
 }
 
 # check
-FILES=/bin/shelld
+FILES="/bin/shelld /bin/miuibooster"
 file_check_system
 if [ "$IS64BIT" == true ]; then
   LISTS=`ls $MODPATH/system/lib64`
@@ -169,6 +169,12 @@ if [ "$IS64BIT" == true ]; then
   if [ -f $DES ]; then
     LISTS=`strings $DES | grep ^lib | grep .so\
             | sed -e 's|libshellservice.so||g' -e 's|libshell_jni.so||g'`
+    FILE=`for LIST in $LISTS; do echo $SYSTEM/lib64/$LIST; done`
+    check_function
+  fi
+  DES=$MODPATH/system/bin/miuibooster
+  if [ -f $DES ] && [ $SYSTEM_10 != true ]; then
+    LISTS=`strings $DES | grep ^lib | grep .so`
     FILE=`for LIST in $LISTS; do echo $SYSTEM/lib64/$LIST; done`
     check_function
   fi
@@ -290,12 +296,12 @@ for NAME in $NAMES; do
     sh $FILE
     rm -f $FILE
   fi
-  rm -rf /metadata/magisk/$NAME
-  rm -rf /mnt/vendor/persist/magisk/$NAME
-  rm -rf /persist/magisk/$NAME
-  rm -rf /data/unencrypted/magisk/$NAME
-  rm -rf /cache/magisk/$NAME
-  rm -rf /cust/magisk/$NAME
+  rm -rf /metadata/magisk/$NAME\
+   /mnt/vendor/persist/magisk/$NAME\
+   /persist/magisk/$NAME\
+   /data/unencrypted/magisk/$NAME\
+   /cache/magisk/$NAME\
+   /cust/magisk/$NAME
 done
 }
 
