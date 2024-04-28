@@ -57,6 +57,7 @@
 - https://github.com/reiryuki/Mi-Music-Magisk-Module
 - https://github.com/reiryuki/Mi-Sound-Redmi-K40-Magisk-Module
 - https://github.com/reiryuki/Miui-Gallery-Magisk-Module
+- https://github.com/reiryuki/Mi-Wallpaper-Carousel-Magisk-Module
 - https://github.com/reiryuki/Miui-Screen-Recorder-Magisk-Module
 - https://github.com/reiryuki/Miui-Security-Center-Magisk-Module
 - https://github.com/reiryuki/Miui-Home-Magisk-Module
