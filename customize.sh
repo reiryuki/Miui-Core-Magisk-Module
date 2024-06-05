@@ -29,6 +29,13 @@ if [ "`grep_prop debug.log $OPTIONALS`" == 1 ]; then
   ui_print " "
 fi
 
+# recovery
+if [ "$BOOTMODE" != true ]; then
+  MODPATH_UPDATE=`echo $MODPATH | sed 's|modules/|modules_update/|g'`
+  rm -f $MODPATH/update
+  rm -rf $MODPATH_UPDATE
+fi
+
 # run
 . $MODPATH/function.sh
 
@@ -112,6 +119,7 @@ for FILE in $FILES; do
     ui_print "- Detected $FILE"
     ui_print " "
     rm -f $MODPATH/system$FILE
+    rm -f $MODPATH/system_10$FILE
   fi
 done
 }
@@ -123,6 +131,7 @@ for FILE in $FILES; do
     ui_print "- Detected $FILE"
     ui_print " "
     rm -f $MODPATH/system/vendor$FILE
+    rm -f $MODPATH/system_10/vendor$FILE
   fi
 done
 }
