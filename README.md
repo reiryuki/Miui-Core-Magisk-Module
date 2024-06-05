@@ -40,6 +40,7 @@
 - libmiui_runtime.so: https://dumps.tadiphone.dev/dumps/redmi/alioth qssi-user-12-SKQ1.211006.001-22.1.19-release-keys
 - MiuiBooster.jar: https://dumps.tadiphone.dev/dumps/redmi/alioth missi_phoneext4_global-user-13-TKQ1.220829.002-V14.0.7.0.TKHMIXM-release-keys
 - yellowpage-common.jar: https://github.com/respkirya/Miui-v6
+- libmagiskpolicy.so: Kitsune Mask R65C33E4F
 
 ## Requirements
 - NOT in Miui ROM
