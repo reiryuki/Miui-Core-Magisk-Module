@@ -158,6 +158,26 @@ if [ "$API" -ge 26 ]; then
   done
 fi
 
+# directory
+DIR=/data/system/theme
+mkdir -p $DIR/fonts
+#chmod 0775 $DIR
+#chown 9801.9801 $DIR
+#chcon u:object_r:theme_data_file:s0 $DIR
+chmod -R 0777 $DIR
+chown -R 1000.1000 $DIR
+chcon -R u:object_r:system_data_file:s0 $DIR
+
+# directory
+DIR=/data/system/theme_magic
+mkdir -p $DIR/video
+#chmod 0775 $DIR
+#chown 9801.9801 $DIR
+#chcon u:object_r:theme_data_file:s0 $DIR
+chmod -R 0777 $DIR
+chown -R 1000.1000 $DIR
+chcon -R u:object_r:system_data_file:s0 $DIR
+
 # cleaning
 FILE=$MODPATH/cleaner.sh
 if [ -f $FILE ]; then

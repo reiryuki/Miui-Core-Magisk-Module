@@ -9,19 +9,19 @@
 - With this module, you can even normal install any non-system Miui apps: https://apkmirror.com/apk/xiaomi-inc
 
 ## For Miui App Porter
-- You can declare this line in your app AndroidManifest.xml after `<application />` if you want to load classes from this Miui Core:
+- You need to declare this line in your app AndroidManifest.xml at `<application />` if you want to load classes from this Miui Core:
 
   `<uses-library android:name="miui" android:required="false" />`
 
-- You can declare this line if you want to load classes from this Miui Core and also resources from miuisystem.apk (causes crash in some ROMs):
+- You need to declare this line if you want to load classes from this Miui Core and also resources from miuisystem.apk (causes crash in some ROMs):
 
   `<uses-library android:name="com.miui.system" android:required="false" />`
 
-- You can declare this line if you want to load resources from framework-ext-res.apk (causes crash in some ROMs):
+- You need to declare this line if you want to load resources from framework-ext-res.apk (causes crash in some ROMs):
 
   `<uses-library android:name="com.miui.rom" android:required="false" />`
 
-- You can declare this line if you want to load resources from miui.apk (causes crash in some ROMs):
+- You need to declare this line if you want to load resources from miui.apk (causes crash in some ROMs):
 
   `<uses-library android:name="com.miui.core" android:required="false" />`
 
@@ -44,13 +44,14 @@
 
 ## Requirements
 - NOT in Miui ROM
-- Architecture arm64 or arm
+- ARM64 or ARM architecture
 - Android 5 and up
 - Magisk or KernelSU installed
 
 ## Installation Guide & Download Link
 - Install this module https://www.pling.com/p/1537512/ via Magisk app or KernelSU app or Recovery if Magisk installed
 - Install any Miui Magisk Module which depends on this module
+- If you are using KernelSU, you need to disable Unmount Modules by Default in KernelSU app settings
 - Reboot
 - If you are using KernelSU, you need to allow superuser list manually all package name listed in package.txt (enable show system apps) and reboot afterwards
 
@@ -65,14 +66,6 @@
 - https://github.com/reiryuki/Miui-App-Vault-Magisk-Module
 - https://github.com/reiryuki/Miui-Clock-Magisk-Module
 - https://github.com/iamr0s/MiShare-Magisk-Module
-
-## Tested on
-- Android 10 CrDroid ROM 
-- Android 11 DotOS ROM
-- Android 12 Ancient OS ROM
-- Android 12.1 Nusantara ROM
-- Android 13 Nusantara ROM, CrDroid ROM, & AlphaDroid ROM
-- Android 14 LineageOS ROM
 
 ## Optionals
 - https://t.me/androidryukimodsdiscussions/54012
