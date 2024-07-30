@@ -9,7 +9,7 @@
 - With this module, you can even normal install any non-system Miui apps: https://apkmirror.com/apk/xiaomi-inc
 
 ## For Miui App Porter
-- You need to declare this line in your app AndroidManifest.xml at `<application />` if you want to load classes from this Miui Core:
+- You need to declare this line in your app AndroidManifest.xml after `<application />` if you want to load classes from this Miui Core:
 
   `<uses-library android:name="miui" android:required="false" />`
 
