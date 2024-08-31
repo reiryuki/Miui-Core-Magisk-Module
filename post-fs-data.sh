@@ -9,6 +9,9 @@ set -x
 API=`getprop ro.build.version.sdk`
 ABI=`getprop ro.product.cpu.abi`
 LIST32BIT=`getprop ro.product.cpu.abilist32`
+if [ ! "$LIST32BIT" ]; then
+  [ -f /system/lib/libandroid.so ] && LIST32BIT=true
+fi
 
 # function
 permissive() {

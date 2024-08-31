@@ -3,9 +3,13 @@ ui_print " "
 
 # var
 UID=`id -u`
+[ ! "$UID" ] && UID=0
 LIST32BIT=`grep_get_prop ro.product.cpu.abilist32`
 if [ ! "$LIST32BIT" ]; then
   LIST32BIT=`grep_get_prop ro.system.product.cpu.abilist32`
+fi
+if [ ! "$LIST32BIT" ]; then
+  [ -f /system/lib/libandroid.so ] && LIST32BIT=true
 fi
 
 # log
@@ -56,24 +60,29 @@ else
 fi
 ui_print " "
 
-# bit
-if [ "$IS64BIT" == true ]; then
-  ui_print "- 64 bit architecture"
+# architecture
+NAME=arm64
+NAME2=arm
+if [ "$ARCH" == $NAME ]; then
+  ui_print "- $ARCH architecture"
   ui_print " "
-  # 32 bit
   if [ "$LIST32BIT" ]; then
     ui_print "- 32 bit library support"
   else
     ui_print "- Doesn't support 32 bit library"
-    rm -rf $MODPATH/armeabi-v7a $MODPATH/x86\
-     $MODPATH/system*/lib $MODPATH/system*/vendor/lib
+    rm -rf $MODPATH/armeabi-v7a $MODPATH/system*/lib\
+     $MODPATH/system*/vendor/lib
   fi
   ui_print " "
-else
-  ui_print "- 32 bit architecture"
+elif [ "$ARCH" == $NAME2 ]; then
+  ui_print "- $ARCH architecture"
   rm -rf `find $MODPATH -type d -name *64*`\
    $MODPATH/system*/bin
   ui_print " "
+else
+  ui_print "! Unsupported $ARCH architecture."
+  ui_print "  This module is only for $NAME or $NAME2 architecture."
+  abort
 fi
 
 # sdk
@@ -113,26 +122,28 @@ fi
 # function
 file_check_system() {
 for FILE in $FILES; do
-  DES=$SYSTEM$FILE
-  DES2=$SYSTEM_EXT$FILE
-  if [ -f $DES ] || [ -f $DES2 ]; then
-    ui_print "- Detected $FILE"
-    ui_print " "
-    rm -f $MODPATH/system$FILE
-    rm -f $MODPATH/system_10$FILE
-  fi
+  DESS="$SYSTEM$FILE $SYSTEM_EXT$FILE"
+  for DES in $DESS; do
+    if [ -f $DES ]; then
+      ui_print "- Detected"
+      ui_print "$DES"
+      rm -f $MODPATH/system*$FILE
+      ui_print " "
+    fi
+  done
 done
 }
 file_check_vendor() {
 for FILE in $FILES; do
-  DES=$VENDOR$FILE
-  DES2=$ODM$FILE
-  if [ -f $DES ] || [ -f $DES2 ]; then
-    ui_print "- Detected $FILE"
-    ui_print " "
-    rm -f $MODPATH/system/vendor$FILE
-    rm -f $MODPATH/system_10/vendor$FILE
-  fi
+  DESS="$VENDOR$FILE $ODM$FILE"
+  for DES in $DESS; do
+    if [ -f $DES ]; then
+      ui_print "- Detected"
+      ui_print "$DES"
+      rm -f $MODPATH/system*/vendor$FILE
+      ui_print " "
+    fi
+  done
 done
 }
 

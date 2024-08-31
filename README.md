@@ -6,7 +6,7 @@
 
 ## Descriptions
 - System core framework library of Miui ROM ported from Xiaomi Mi 9 (cepheus) as a dependency of any Miui Magisk Modules
-- With this module, you can even normal install any non-system Miui apps: https://apkmirror.com/apk/xiaomi-inc
+- With this module, you can even normal install any NON-SYSTEM Miui apps: https://apkmirror.com/apk/xiaomi-inc
 
 ## For Miui App Porter
 - You need to declare this line in your app AndroidManifest.xml after `<application />` if you want to load classes from this Miui Core:
@@ -45,7 +45,7 @@
 ## Requirements
 - NOT in Miui ROM
 - ARM64 or ARM architecture
-- Android 5 and up
+- Android 5 (SDK 21) and up
 - Magisk or KernelSU installed
 
 ## Installation Guide & Download Link
@@ -79,6 +79,7 @@
 - If you don't do above, issues will be closed immediately
 
 ## Credits and Contributors
+- @HuskyDG
 - https://t.me/androidryukimodsdiscussions
 - You can contribute ideas about this Magisk Module here: https://t.me/androidappsportdevelopment
 
