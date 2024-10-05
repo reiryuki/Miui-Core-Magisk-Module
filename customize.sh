@@ -4,12 +4,16 @@ ui_print " "
 # var
 UID=`id -u`
 [ ! "$UID" ] && UID=0
-LIST32BIT=`grep_get_prop ro.product.cpu.abilist32`
-if [ ! "$LIST32BIT" ]; then
-  LIST32BIT=`grep_get_prop ro.system.product.cpu.abilist32`
+ABILIST=`grep_get_prop ro.product.cpu.abilist`
+if [ ! "$ABILIST" ]; then
+  ABILIST=`grep_get_prop ro.system.product.cpu.abilist`
 fi
-if [ ! "$LIST32BIT" ]; then
-  [ -f /system/lib/libandroid.so ] && LIST32BIT=true
+ABILIST32=`grep_get_prop ro.product.cpu.abilist32`
+if [ ! "$ABILIST32" ]; then
+  ABILIST32=`grep_get_prop ro.system.product.cpu.abilist32`
+fi
+if [ ! "$ABILIST32" ]; then
+  [ -f /system/lib/libandroid.so ] && ABILIST32=true
 fi
 
 # log
@@ -61,28 +65,40 @@ fi
 ui_print " "
 
 # architecture
-NAME=arm64
-NAME2=arm
-if [ "$ARCH" == $NAME ]; then
-  ui_print "- $ARCH architecture"
+if [ "$ABILIST" ]; then
+  ui_print "- $ABILIST architecture"
   ui_print " "
-  if [ "$LIST32BIT" ]; then
-    ui_print "- 32 bit library support"
+fi
+NAME=arm64-v8a
+NAME2=armeabi-v7a
+if ! echo "$ABILIST" | grep -Eq "$NAME|$NAME2"; then
+  if [ "$BOOTMODE" == true ]; then
+    ui_print "! This ROM doesn't support $NAME"
+    ui_print "  nor $NAME2 architecture"
   else
-    ui_print "- Doesn't support 32 bit library"
-    rm -rf $MODPATH/armeabi-v7a $MODPATH/system*/lib\
-     $MODPATH/system*/vendor/lib
+    ui_print "! This Recovery doesn't support $NAME"
+    ui_print "  nor $NAME2 architecture"
+    ui_print "  Try to install via Magisk app instead"
   fi
-  ui_print " "
-elif [ "$ARCH" == $NAME2 ]; then
-  ui_print "- $ARCH architecture"
+  abort
+fi
+if ! echo "$ABILIST" | grep -q $NAME; then
   rm -rf `find $MODPATH -type d -name *64*`\
    $MODPATH/system*/bin
-  ui_print " "
-else
-  ui_print "! Unsupported $ARCH architecture."
-  ui_print "  This module is only for $NAME or $NAME2 architecture."
-  abort
+  if [ "$BOOTMODE" != true ]; then
+    ui_print "! This Recovery doesn't support $NAME architecture"
+    ui_print "  Try to install via Magisk app instead"
+    ui_print " "
+  fi
+fi
+if ! echo "$ABILIST" | grep -q $NAME2; then
+  rm -rf $MODPATH/system*/lib\
+   $MODPATH/system*/vendor/lib
+  if [ "$BOOTMODE" != true ]; then
+    ui_print "! This Recovery doesn't support $NAME2 architecture"
+    ui_print "  Try to install via Magisk app instead"
+    ui_print " "
+  fi
 fi
 
 # sdk
@@ -158,7 +174,7 @@ if [ "$IS64BIT" == true ]; then
   FILES=`for LIST in $LISTS; do echo /lib64/$LIST; done`
   file_check_vendor
 fi
-if [ "$LIST32BIT" ]; then
+if [ "$ABILIST32" ]; then
   LISTS=`ls $MODPATH/system/lib`
   FILES=`for LIST in $LISTS; do echo /lib/$LIST; done`
   file_check_system
@@ -227,7 +243,7 @@ if [ "$IS64BIT" == true ]; then
     check_function
   fi
 fi
-if [ "$LIST32BIT" ]; then
+if [ "$ABILIST32" ]; then
   DES=$MODPATH/system/lib/libexmedia.so
   if [ -f $DES ] && [ $SYSTEM_10 != true ]; then
     LISTS=`strings $DES | grep ^lib | grep .so\

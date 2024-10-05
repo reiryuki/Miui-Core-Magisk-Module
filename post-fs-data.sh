@@ -8,9 +8,10 @@ set -x
 # var
 API=`getprop ro.build.version.sdk`
 ABI=`getprop ro.product.cpu.abi`
-LIST32BIT=`getprop ro.product.cpu.abilist32`
-if [ ! "$LIST32BIT" ]; then
-  [ -f /system/lib/libandroid.so ] && LIST32BIT=true
+ABILIST=`getprop ro.product.cpu.abilist`
+ABILIST32=`getprop ro.product.cpu.abilist32`
+if [ ! "$ABILIST32" ]; then
+  [ -f /system/lib/libandroid.so ] && ABILIST32=true
 fi
 
 # function
@@ -109,7 +110,8 @@ fi
 patch_public_libraries() {
 for NAME in $NAMES; do
   if ! grep $NAME $FILE; then
-    if echo "$ABI" | grep 64 && [ ! "$LIST32BIT" ]; then
+    if echo "$ABILIST" | grep arm64-v8a\
+    && ! echo "$ABILIST" | grep armeabi-v7a; then
       echo "$NAME 64" >> $FILE
     else
       echo $NAME >> $FILE
@@ -121,7 +123,8 @@ chmod 0644 $FILE
 patch_public_libraries_nopreload() {
 for NAME in $NAMES; do
   if ! grep $NAME $FILE; then
-    if echo "$ABI" | grep 64 && [ ! "$LIST32BIT" ]; then
+    if echo "$ABILIST" | grep arm64-v8a\
+    && ! echo "$ABILIST" | grep armeabi-v7a; then
       echo "$NAME 64 nopreload" >> $FILE
     else
       echo "$NAME nopreload" >> $FILE
