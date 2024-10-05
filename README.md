@@ -44,7 +44,7 @@
 
 ## Requirements
 - NOT in Miui ROM
-- arm64-v7a or armeabi-v7a architecture
+- arm64-v8a or armeabi-v7a architecture
 - Android 5 (SDK 21) and up
 - Magisk or KernelSU installed
 
