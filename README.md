@@ -58,6 +58,8 @@
 ## Miui Magisk Modules Available
 - https://github.com/reiryuki/Mi-Music-Magisk-Module
 - https://github.com/reiryuki/Mi-Sound-Redmi-K40-Magisk-Module
+- https://github.com/reiryuki/Miui-Gallery-AI-Magisk-Module
+- https://github.com/reiryuki/Miui-Gallery-Editor-Magisk-Module
 - https://github.com/reiryuki/Miui-Gallery-Magisk-Module
 - https://github.com/reiryuki/Mi-Wallpaper-Carousel-Magisk-Module
 - https://github.com/reiryuki/Miui-Screen-Recorder-Magisk-Module
@@ -68,14 +70,14 @@
 - https://github.com/iamr0s/MiShare-Magisk-Module
 
 ## Optionals
-- https://t.me/androidryukimodsdiscussions/54012
-- Global: https://t.me/androidryukimodsdiscussions/60861
+- https://t.me/ryukinotes/42
+- Global: https://t.me/ryukinotes/35
 
 ## Troubleshootings
-- Global: https://t.me/androidryukimodsdiscussions/29836
+- Global: https://t.me/ryukinotes/34
 
 ## Support & Bug Report
-- https://t.me/androidryukimodsdiscussions/2618
+- https://t.me/ryukinotes/54
 - If you don't do above, issues will be closed immediately
 
 ## Credits and Contributors
