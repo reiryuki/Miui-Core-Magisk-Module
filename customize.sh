@@ -283,21 +283,21 @@ if [ "$IS64BIT" == true ]; then
   DES=$MODPATH/system/lib64/libexmedia.so
   if [ -f $DES ] && [ $SYSTEM_10 != true ]; then
     LISTS=`strings $DES | grep ^lib | grep .so\
-            | sed -e 's|libexmedia.so||g'`
+            | sed 's|libexmedia.so||g'`
     FILE=`for LIST in $LISTS; do echo $SYSTEM/lib64/$LIST; done`
     check_function
   fi
   DES=$MODPATH/system/lib64/libmiuiblur.so
   if [ -f $DES ] && [ $SYSTEM_10 != true ]; then
     LISTS=`strings $DES | grep ^lib | grep .so\
-            | sed -e 's|libmiuiblur.so||g'`
+            | sed 's|libmiuiblur.so||g'`
     FILE=`for LIST in $LISTS; do echo $SYSTEM/lib64/$LIST; done`
     check_function
   fi
   DES=$MODPATH/system/lib64/libshell.so
   if [ -f $DES ] && [ $SYSTEM_10 != true ]; then
     LISTS=`strings $DES | grep ^lib | grep .so\
-            | sed -e 's|libshell.so||g'`
+            | sed 's|libshell.so||g'`
     FILE=`for LIST in $LISTS; do echo $SYSTEM/lib64/$LIST; done`
     check_function
   fi
@@ -313,21 +313,21 @@ if [ "$ABILIST32" ]; then
   DES=$MODPATH/system/lib/libexmedia.so
   if [ -f $DES ] && [ $SYSTEM_10 != true ]; then
     LISTS=`strings $DES | grep ^lib | grep .so\
-            | sed -e 's|libexmedia.so||g'`
+            | sed 's|libexmedia.so||g'`
     FILE=`for LIST in $LISTS; do echo $SYSTEM/lib/$LIST; done`
     check_function
   fi
   DES=$MODPATH/system/lib/libmiuiblur.so
   if [ -f $DES ] && [ $SYSTEM_10 != true ]; then
     LISTS=`strings $DES | grep ^lib | grep .so\
-           | sed -e 's|libmiuiblur.so||g'`
+           | sed 's|libmiuiblur.so||g'`
     FILE=`for LIST in $LISTS; do echo $SYSTEM/lib/$LIST; done`
     check_function
   fi
   DES=$MODPATH/system/lib/libshell.so
   if [ -f $DES ] && [ $SYSTEM_10 != true ]; then
     LISTS=`strings $DES | grep ^lib | grep .so\
-           | sed -e 's|libshell.so||g'`
+           | sed 's|libshell.so||g'`
     FILE=`for LIST in $LISTS; do echo $SYSTEM/lib/$LIST; done`
     check_function
   fi
@@ -344,7 +344,46 @@ if [ $SYSTEM_10 == true ]; then
   cp -rf $MODPATH/system_10/* $MODPATH/system
   ui_print " "
 fi
-rm -rf $MODPATH/system_10
+
+# check
+NAME=_ZN7android7meminfo11ProcMemInfo18ForEachVmaFromMapsERKNSt3__18functionIFvRKNS0_3VmaEEEE
+NAME2=_ZN7android7meminfo11ProcMemInfo18ForEachVmaFromMapsERKNSt3__18functionIFbRNS0_3VmaEEEE
+if [ "$IS64BIT" == true ]; then
+  DES=$MODPATH/system/lib64/libmiui_runtime.so
+  if [ -f $DES ]; then
+    LISTS=`strings $DES | grep ^lib | grep .so\
+            | sed 's|libmiui_runtime.so||g'`
+    FILE=`for LIST in $LISTS; do echo $SYSTEM/lib64/$LIST; done`
+    ui_print "- Checking"
+    ui_print "$NAME"
+    ui_print "  function at"
+    ui_print "$FILE"
+    ui_print "  Please wait..."
+    if ! grep -q $NAME $FILE; then
+      ui_print "  Using modified libmiui_runtime.so"
+      cp -rf $MODPATH/system_15/lib64 $MODPATH/system
+    fi
+    ui_print " "
+  fi
+fi
+if [ "$ABILIST32" ]; then
+  DES=$MODPATH/system/lib/libmiui_runtime.so
+  if [ -f $DES ]; then
+    LISTS=`strings $DES | grep ^lib | grep .so\
+            | sed 's|libmiui_runtime.so||g'`
+    FILE=`for LIST in $LISTS; do echo $SYSTEM/lib/$LIST; done`
+    ui_print "- Checking"
+    ui_print "$NAME"
+    ui_print "  function at"
+    ui_print "$FILE"
+    ui_print "  Please wait..."
+    if ! grep -q $NAME $FILE; then
+      ui_print "  Using modified libmiui_runtime.so"
+      cp -rf $MODPATH/system_15/lib $MODPATH/system
+    fi
+    ui_print " "
+  fi
+fi
 
 # extract
 APP=miuisystem
@@ -367,7 +406,7 @@ if [ "$BOOTMODE" == true ]; then
     fi
   done
 fi
-rm -rf $MODPATH/unused
+rm -rf $MODPATH/system_* $MODPATH/unused
 remove_sepolicy_rule
 ui_print " "
 # power save
