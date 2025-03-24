@@ -529,6 +529,11 @@ elif [ ! -d /product/media ] && [ ! -d /system/media ]; then
   ui_print " "
 fi
 
+# copy
+DIR=$MODPATH/system_ext/framework
+mkdir -p $DIR
+cp -f $MODPATH/system/framework/MiuiBooster.jar $DIR
+
 # unmount
 unmount_mirror
 
