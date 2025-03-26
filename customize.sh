@@ -530,7 +530,7 @@ elif [ ! -d /product/media ] && [ ! -d /system/media ]; then
 fi
 
 # copy
-DIR=$MODPATH/system_ext/framework
+DIR=$MODPATH/system/system_ext/framework
 mkdir -p $DIR
 cp -f $MODPATH/system/framework/MiuiBooster.jar $DIR
 
