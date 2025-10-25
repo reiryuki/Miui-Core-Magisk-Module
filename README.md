@@ -9,7 +9,7 @@
 - With this module, you can even normal install any NON-SYSTEM Miui apps: https://apkmirror.com/apk/xiaomi-inc
 
 ## For Miui App Porter
-- You need to declare this line in your app AndroidManifest.xml after `<application />` if you want to load classes from this Miui Core:
+- You need to declare this line in your app AndroidManifest.xml at `<application />` if you want to load classes from this Miui Core:
 
   `<uses-library android:name="miui" android:required="false" />`
 
@@ -64,7 +64,7 @@
 - https://github.com/reiryuki/Mi-Wallpaper-Carousel-Magisk-Module
 - https://github.com/reiryuki/Miui-Screen-Recorder-Magisk-Module
 - https://github.com/reiryuki/Miui-Security-Center-Magisk-Module
-- https://github.com/reiryuki/Miui-Home-Magisk-Module
+- https://github.com/reiryuki/Miui-Home-30-Magisk-Module
 - https://github.com/reiryuki/Miui-App-Vault-Magisk-Module
 - https://github.com/reiryuki/Miui-Clock-Magisk-Module
 - https://github.com/iamr0s/MiShare-Magisk-Module

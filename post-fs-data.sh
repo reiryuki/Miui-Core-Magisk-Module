@@ -8,22 +8,63 @@ set -x
 # var
 API=`getprop ro.build.version.sdk`
 ABI=`getprop ro.product.cpu.abi`
+FIRARCH=`getprop ro.bionic.arch`
+SECARCH=`getprop ro.bionic.2nd_arch`
 ABILIST=`getprop ro.product.cpu.abilist`
-ABILIST32=`getprop ro.product.cpu.abilist32`
-if [ ! "$ABILIST32" ]; then
-  [ -f /system/lib/libandroid.so ] && ABILIST32=true
+if [ ! "$ABILIST" ]; then
+  ABILIST=`getprop ro.system.product.cpu.abilist`
+fi
+if [ "$FIRARCH" == arm64 ]\
+&& ! echo "$ABILIST" | grep -q arm64-v8a; then
+  if [ "$ABILIST" ]; then
+    ABILIST="$ABILIST,arm64-v8a"
+  else
+    ABILIST=arm64-v8a
+  fi
+fi
+if [ "$FIRARCH" == x64 ]\
+&& ! echo "$ABILIST" | grep -q x86_64; then
+  if [ "$ABILIST" ]; then
+    ABILIST="$ABILIST,x86_64"
+  else
+    ABILIST=x86_64
+  fi
+fi
+if [ "$SECARCH" == arm ]\
+&& ! echo "$ABILIST" | grep -q armeabi; then
+  if [ "$ABILIST" ]; then
+    ABILIST="$ABILIST,armeabi"
+  else
+    ABILIST=armeabi
+  fi
+fi
+if [ "$SECARCH" == arm ]\
+&& ! echo "$ABILIST" | grep -q armeabi-v7a; then
+  if [ "$ABILIST" ]; then
+    ABILIST="$ABILIST,armeabi-v7a"
+  else
+    ABILIST=armeabi-v7a
+  fi
+fi
+if [ "$SECARCH" == x86 ]\
+&& ! echo "$ABILIST" | grep -q x86; then
+  if [ "$ABILIST" ]; then
+    ABILIST="$ABILIST,x86"
+  else
+    ABILIST=x86
+  fi
 fi
 
 # function
 permissive() {
-if [ "$SELINUX" == Enforcing ]; then
-  if ! setenforce 0; then
-    echo 0 > /sys/fs/selinux/enforce
-  fi
+if [ "`toybox cat $FILE`" = 1 ]; then
+  chmod 640 $FILE
+  chmod 440 $FILE2
+  echo 0 > $FILE
 fi
 }
 magisk_permissive() {
-if [ "$SELINUX" == Enforcing ]; then
+if [ "`toybox cat $FILE`" = 1 ]; then
   if [ -x "`command -v magiskpolicy`" ]; then
 	magiskpolicy --live "permissive *"
   else
@@ -42,11 +83,12 @@ fi
 }
 
 # selinux
-SELINUX=`getenforce`
-chmod 0755 $MODPATH/*/libmagiskpolicy.so
+FILE=/sys/fs/selinux/enforce
+FILE2=/sys/fs/selinux/policy
 #1permissive
+chmod 0755 $MODPATH/*/libmagiskpolicy.so
 #2magisk_permissive
-#kFILE=$MODPATH/sepolicy.rule
+FILE=$MODPATH/sepolicy.rule
 #ksepolicy_sh
 FILE=$MODPATH/sepolicy.pfsd
 sepolicy_sh
@@ -95,7 +137,48 @@ if [ "$API" -ge 26 ]; then
   fi
 fi
 
-# path
+# function
+patch_public_libraries() {
+for NAME in $NAMES; do
+  for FILE in $FILES; do
+    if ! grep $NAME $FILE; then
+      if echo "$ABILIST" | grep arm64-v8a\
+      && ! echo "$ABILIST" | grep armeabi-v7a; then
+        echo "$NAME 64" >> $FILE
+      else
+        echo $NAME >> $FILE
+      fi
+    fi
+  done
+done
+if [ ! "$DUPS" ]; then
+  for FILE in $FILES; do
+    chmod 0644 $FILE
+  done
+fi
+}
+patch_public_libraries_nopreload() {
+for NAME in $NAMES; do
+  for FILE in $FILES; do
+    if ! grep $NAME $FILE; then
+      if echo "$ABILIST" | grep arm64-v8a\
+      && ! echo "$ABILIST" | grep armeabi-v7a; then
+        echo "$NAME 64 nopreload" >> $FILE
+      else
+        echo "$NAME nopreload" >> $FILE
+      fi
+    fi
+  done
+done
+if [ ! "$DUPS" ]; then
+  for FILE in $FILES; do
+    chmod 0644 $FILE
+  done
+fi
+}
+
+# patch public libraries
+MODID=`basename "$MODPATH"`
 ETC=/system/etc
 VETC=/vendor/etc
 MODETC=$MODPATH$ETC
@@ -105,43 +188,18 @@ if [ -L $MODPATH/system/vendor ]\
 else
   MODVETC=$MODPATH/system$VETC
 fi
-
-# function
-patch_public_libraries() {
-for NAME in $NAMES; do
-  if ! grep $NAME $FILE; then
-    if echo "$ABILIST" | grep arm64-v8a\
-    && ! echo "$ABILIST" | grep armeabi-v7a; then
-      echo "$NAME 64" >> $FILE
-    else
-      echo $NAME >> $FILE
-    fi
-  fi
-done
-chmod 0644 $FILE
-}
-patch_public_libraries_nopreload() {
-for NAME in $NAMES; do
-  if ! grep $NAME $FILE; then
-    if echo "$ABILIST" | grep arm64-v8a\
-    && ! echo "$ABILIST" | grep armeabi-v7a; then
-      echo "$NAME 64 nopreload" >> $FILE
-    else
-      echo "$NAME nopreload" >> $FILE
-    fi
-  fi
-done
-chmod 0644 $FILE
-}
-
-# patch public libraries
 DES=public.libraries.txt
 rm -f `find $MODPATH -type f -name $DES`
 NAMES="libnativehelper.so libnativeloader.so libcutils.so
        libutils.so libc++.so libandroidfw.so libui.so
        libandroid_runtime.so libbinder.so"
-FILE=$MODETC/$DES
-#pcp -af $ETC/$DES $MODETC
+DUPS=`find /data/adb/modules/*$ETC ! -path "*/$MODID/*" -type f -name $DES`
+if [ "$DUPS" ]; then
+  FILES=$DUPS
+else
+  #pcp -af $ETC/$DES $MODETC
+  FILES=$MODETC/$DES
+fi
 #ppatch_public_libraries
 NAMES="libmiui_runtime.so libmiuiblursdk.so libmiuinative.so
        libmiuiblur.so libthemeutils_jni.so libshell_jni.so libshell.so
@@ -149,11 +207,20 @@ NAMES="libmiui_runtime.so libmiuiblursdk.so libmiuinative.so
 #ppatch_public_libraries_nopreload
 NAMES="libcdsprpc.so libadsprpc.so libOpenCL.so
        libarcsoft_beautyshot.so libmpbase.so"
-FILE=$MODVETC/$DES
-#pcp -af $VETC/$DES $MODVETC
+if [ -L $MODPATH/system/vendor ]\
+&& [ -d $MODPATH/vendor ]; then
+  DUPS=`find /data/adb/modules/*$VETC ! -path "*/$MODID/*" -type f -name $DES`
+else
+  DUPS=`find /data/adb/modules/*/system$VETC ! -path "*/$MODID/*" -type f -name $DES`
+fi
+if [ "$DUPS" ]; then
+  FILES=$DUPS
+else
+  #pcp -af $VETC/$DES $MODVETC
+  FILES=$MODVETC/$DES
+fi
 #ppatch_public_libraries
 if [ "$API" -ge 26 ]; then
-  chcon u:object_r:vendor_configs_file:s0 $FILE
   for NAME in $NAMES; do
     if [ -L $MODPATH/system/vendor ]\
     && [ -d $MODPATH/vendor ]; then
@@ -162,6 +229,11 @@ if [ "$API" -ge 26 ]; then
       chcon u:object_r:same_process_hal_file:s0 $MODPATH/system/vendor/lib*/$NAME
     fi
   done
+  if [ ! "$DUPS" ]; then
+    for FILE in $FILES; do
+      chcon u:object_r:vendor_configs_file:s0 $FILE
+    done
+  fi
 fi
 
 # directory

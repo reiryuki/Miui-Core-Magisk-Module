@@ -120,13 +120,17 @@ if [ ! -d $MIRROR$DIR ]; then
       ln -sf $MIRROR/system_root$DIR $MIRROR
     else
       ui_print "  ! Failed"
+      ui_print "    Try to reboot device first"
       rm -rf $MIRROR/system_root
+      abort
     fi
   else
     mkdir -p $MIRROR$DIR
     if ! mount_mirror $DIR $MIRROR$DIR; then
       ui_print "  ! Failed"
+      ui_print "    Try to reboot device first"
       rm -rf $MIRROR$DIR
+      abort
     fi
   fi
   ui_print " "
