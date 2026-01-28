@@ -54,6 +54,13 @@ if [ "$SECARCH" == x86 ]\
     ABILIST=x86
   fi
 fi
+if [ -L $MODPATH/system/vendor ]; then
+  mkdir -p $MODPATH/vendor
+fi
+if [ ! -d $MODPATH/vendor ]\
+|| [ -L $MODPATH/vendor ]; then
+  MODSYSTEM=/system
+fi
 
 # function
 permissive() {
@@ -127,14 +134,8 @@ if [ "$API" -ge 26 ]; then
     chown 0.2000 $FILE
   done
   chcon -R u:object_r:system_lib_file:s0 $MODPATH/system/lib*
-  if [ -L $MODPATH/system/vendor ]\
-  && [ -d $MODPATH/vendor ]; then
-    chcon -R u:object_r:vendor_file:s0 $MODPATH/vendor
-    chcon -R u:object_r:vendor_configs_file:s0 $MODPATH/vendor/etc
-  else
-    chcon -R u:object_r:vendor_file:s0 $MODPATH/system/vendor
-    chcon -R u:object_r:vendor_configs_file:s0 $MODPATH/system/vendor/etc
-  fi
+  chcon -R u:object_r:vendor_file:s0 $MODPATH$MODSYSTEM/vendor
+  chcon -R u:object_r:vendor_configs_file:s0 $MODPATH$MODSYSTEM/vendor/etc
 fi
 
 # function
@@ -182,22 +183,17 @@ MODID=`basename "$MODPATH"`
 ETC=/system/etc
 VETC=/vendor/etc
 MODETC=$MODPATH$ETC
-if [ -L $MODPATH/system/vendor ]\
-&& [ -d $MODPATH/vendor ]; then
-  MODVETC=$MODPATH$VETC
-else
-  MODVETC=$MODPATH/system$VETC
-fi
+MODVETC=$MODPATH$MODSYSTEM$VETC
 DES=public.libraries.txt
 rm -f `find $MODPATH -type f -name $DES`
 NAMES="libnativehelper.so libnativeloader.so libcutils.so
        libutils.so libc++.so libandroidfw.so libui.so
        libandroid_runtime.so libbinder.so"
-DUPS=`find /data/adb/modules/*$ETC ! -path "*/$MODID/*" -type f -name $DES`
+DUPS=`find /data/adb/modules/*$ETC ! -path "*/$MODID/*" -maxdepth 1 -type f -name $DES`
 if [ "$DUPS" ]; then
   FILES=$DUPS
 else
-  #pcp -af $ETC/$DES $MODETC
+#p  cp -af $ETC/$DES $MODETC
   FILES=$MODETC/$DES
 fi
 #ppatch_public_libraries
@@ -207,27 +203,17 @@ NAMES="libmiui_runtime.so libmiuiblursdk.so libmiuinative.so
 #ppatch_public_libraries_nopreload
 NAMES="libcdsprpc.so libadsprpc.so libOpenCL.so
        libarcsoft_beautyshot.so libmpbase.so"
-if [ -L $MODPATH/system/vendor ]\
-&& [ -d $MODPATH/vendor ]; then
-  DUPS=`find /data/adb/modules/*$VETC ! -path "*/$MODID/*" -type f -name $DES`
-else
-  DUPS=`find /data/adb/modules/*/system$VETC ! -path "*/$MODID/*" -type f -name $DES`
-fi
+DUPS=`find /data/adb/modules/*$MODSYSTEM$VETC ! -path "*/$MODID/*" -maxdepth 1 -type f -name $DES`
 if [ "$DUPS" ]; then
   FILES=$DUPS
 else
-  #pcp -af $VETC/$DES $MODVETC
+#p  cp -af $VETC/$DES $MODVETC
   FILES=$MODVETC/$DES
 fi
 #ppatch_public_libraries
 if [ "$API" -ge 26 ]; then
   for NAME in $NAMES; do
-    if [ -L $MODPATH/system/vendor ]\
-    && [ -d $MODPATH/vendor ]; then
-      chcon u:object_r:same_process_hal_file:s0 $MODPATH/vendor/lib*/$NAME
-    else
-      chcon u:object_r:same_process_hal_file:s0 $MODPATH/system/vendor/lib*/$NAME
-    fi
+    chcon u:object_r:same_process_hal_file:s0 $MODPATH$MODSYSTEM/vendor/lib*/$NAME
   done
   if [ ! "$DUPS" ]; then
     for FILE in $FILES; do

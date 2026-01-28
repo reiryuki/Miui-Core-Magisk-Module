@@ -16,20 +16,15 @@ resetprop -n ro.config.miui_magic_window_enable true
 resetprop -n ro.config.miui_multiwindow_optimization true
 resetprop -n ro.config.miui_multi_window_switch_enable true
 
+# permission
+chmod 0755 $MODPATH/system/bin/*
+[ "$API" -ge 26 ] && chown 0.2000 $MODPATH/system/bin/*
+
 # run
 NAMES="shelld miuibooster"
 for NAME in $NAMES; do
   SERVICE=/system/bin/$NAME
-  if ! pidof $NAME && [ -f $SERVICE ]; then
-    if ! stat -c %a $SERVICE | grep -E '755|775|777|757'; then
-      mount -o remount,rw $SERVICE
-      chmod 0755 $SERVICE
-    fi
-    if [ "$API" -ge 26 ]\
-    && [ "`stat -c %u.%g $SERVICE`" != 0.2000 ]; then
-      mount -o remount,rw $SERVICE
-      chown 0.2000 $SERVICE
-    fi
+  if [ -f $SERVICE ] && ! pidof $NAME; then
     $NAME &
     PID=`pidof $NAME`
   fi

@@ -230,7 +230,8 @@ done
 }
 
 # check
-FILES="/bin/shelld /bin/miuibooster"
+LISTS=`ls $MODPATH/system/bin`
+FILES=`for LIST in $LISTS; do echo /bin/$LIST; done`
 file_check_system
 if [ "$IS64BIT" == true ]; then
   LISTS=`ls $MODPATH/system/lib64`
