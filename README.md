@@ -40,7 +40,46 @@
 - libmiui_runtime.so: https://dumps.tadiphone.dev/dumps/redmi/alioth qssi-user-12-SKQ1.211006.001-22.1.19-release-keys
 - MiuiBooster.jar: https://dumps.tadiphone.dev/dumps/redmi/alioth missi_phoneext4_global-user-13-TKQ1.220829.002-V14.0.7.0.TKHMIXM-release-keys
 - yellowpage-common.jar: https://github.com/respkirya/Miui-v6
-- libmagiskpolicy.so: Kitsune Mask R6687BB53
+- libmagiskpolicy.so: Magisk (stable) 30.7 (30700)
+
+## Changelog
+
+v6.7
+- Update libmagiskpolicy.so from Magisk (stable) 30.7 (30700)
+- Prepare /storage/emulated/"$UID"/Android/data/com.miui.core/files directory
+
+v6.6
+- Fix wrong target in latest KernelSU
+
+v6.5
+- Change optional miui.public to public.libraries (in Global Optionals)
+- Abort installation if it's failed to mount mirror system
+- Fix ABILIST detection in post-fs-data.sh
+- Fix conflict with Play Integrity in permissive mode
+- Fix conflict with other modules which also patch public.libraries.txt
+
+v6.4-R
+- Fix wrong copy target
+
+v6.4
+- /system_ext/framework/MiuiBooster.jar support
+
+v6.3
+- Fix dlopen failed libmiui_runtime.so in SDK 35
+
+v6.2
+- Fix getCurrentFreeFormWindowMode method
+
+v6.1
+- Add Action button to clear apps caches
+- Fix architecture detection in some weird ROMs
+- Fix bug in uninstall.sh
+
+v6.0
+- Allow installation in Android Emulator
+
+v5.9
+- Fix fatal exceptions
 
 ## Requirements
 - NOT in Miui ROM
@@ -49,8 +88,8 @@
 - Magisk or Kitsune Mask or KernelSU or Apatch installed
 
 ## Installation Guide & Download Link
-- If you are using KernelSU, you need to disable Unmount Modules by Default in KernelSU app settings and install https://github.com/KernelSU-Modules-Repo/meta-overlayfs first
-- Install this module https://www.pling.com/p/1537512/ via Magisk app or Kitsune Mask app or KernelSU app or Apatch app or Recovery if Magisk or Kitsune Mask installed
+- If you are using KernelSU, you need to disable Unmount Modules by Default in KernelSU app settings and install https://github.com/KernelSU-Modules-Repo/meta-overlayfs or https://github.com/KernelSU-Modules-Repo/magic_mount_rs or https://github.com/KernelSU-Modules-Repo/hybrid_mount first depending on ROM compatibility
+- Install this module via Magisk app or Kitsune Mask app or KernelSU app or Apatch app or Recovery if Magisk or Kitsune Mask installed
 - Install any Miui Magisk Module which depends on this module
 - Reboot
 - If you are using KernelSU, you need to allow superuser list manually all package name listed in package.txt (enable show system apps) and reboot afterwards
@@ -74,7 +113,7 @@
 - Global: https://t.me/ryukinotes/35
 
 ## Troubleshootings
-- Global: https://t.me/ryukinotes/34
+Global: https://t.me/ryukinotes/34
 
 ## Support & Bug Report
 - https://t.me/ryukinotes/54
@@ -86,6 +125,6 @@
 - You can contribute ideas about this Magisk Module here: https://t.me/androidappsportdevelopment
 
 ## Sponsors
-- https://t.me/ryukinotes/25
+https://t.me/ryukinotes/25
 
 

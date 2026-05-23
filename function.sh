@@ -67,6 +67,11 @@ if [ "$BOOTMODE" != true ]; then
     mount -o rw -t auto $BLOCK$DIR $DIR\
     || mount -o rw -t auto $BLOCK2$DIR $DIR
   fi
+  DIR=/klogdump
+  if [ -d $DIR ] && ! is_mounted $DIR; then
+    mount -o rw -t auto $BLOCK$DIR $DIR\
+    || mount -o rw -t auto $BLOCK2$DIR $DIR
+  fi
 fi
 }
 get_device() {
@@ -246,7 +251,8 @@ rm -rf /metadata/magisk/"$MODID"\
  /persist/magisk/"$MODID"\
  /data/unencrypted/magisk/"$MODID"\
  /cache/magisk/"$MODID"\
- /cust/magisk/"$MODID"
+ /cust/magisk/"$MODID"\
+ /klogdump/magisk/"$MODID"
 }
 
 
