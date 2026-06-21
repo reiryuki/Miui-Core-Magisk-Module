@@ -6,9 +6,9 @@
 
 ## Descriptions
 - System core framework library of Miui ROM ported from Xiaomi Mi 9 (cepheus) as a dependency of any Miui Magisk Modules
-- With this module, you can even normal install any NON-SYSTEM Miui apps: https://apkmirror.com/apk/xiaomi-inc
+- With this module, you can even normal install any NON-SYSTEM Miui apps: https://apkmirror.com/apk/xiaomi-inc, but of course it doesn't make it fully compatible. Most of them still need advanced porting because this module only provides missing classes and resources and no more.
 
-## For Miui App Porter
+## For Miui Apps Porting
 - You need to declare this line in your app AndroidManifest.xml at `<application />` if you want to load classes from this Miui Core:
 
   `<uses-library android:name="miui" android:required="false" />`
@@ -44,6 +44,11 @@
 
 ## Changelog
 
+v6.8
+- Support NoMount metamodule
+- Resets module folders/files permissions at post-fs-data
+- Move _uninstall.log to /data/adb/logs/
+
 v6.7
 - Update libmagiskpolicy.so from Magisk (stable) 30.7 (30700)
 - Prepare /storage/emulated/"$UID"/Android/data/com.miui.core/files directory
@@ -78,9 +83,6 @@ v6.1
 v6.0
 - Allow installation in Android Emulator
 
-v5.9
-- Fix fatal exceptions
-
 ## Requirements
 - NOT in Miui ROM
 - arm64-v8a or armeabi-v7a architecture
@@ -88,8 +90,8 @@ v5.9
 - Magisk or Kitsune Mask or KernelSU or Apatch installed
 
 ## Installation Guide & Download Link
-- If you are using KernelSU, you need to disable Unmount Modules by Default in KernelSU app settings and install https://github.com/KernelSU-Modules-Repo/meta-overlayfs or https://github.com/KernelSU-Modules-Repo/magic_mount_rs or https://github.com/KernelSU-Modules-Repo/hybrid_mount first depending on ROM compatibility
-- Install this module https://devuploads.com/iuysu4k2s42a via Magisk app or Kitsune Mask app or KernelSU app or Apatch app or Recovery if Magisk or Kitsune Mask installed
+- If you are using KernelSU, you need to disable Unmount Modules by Default in KernelSU app settings and install https://github.com/KernelSU-Modules-Repo/meta-overlayfs or https://github.com/KernelSU-Modules-Repo/magic_mount_rs or https://github.com/KernelSU-Modules-Repo/hybrid_mount or https://github.com/maxsteeel/nomount first depending on ROM compatibility
+- Install this module via Magisk app or Kitsune Mask app or KernelSU app or Apatch app or Recovery if Magisk or Kitsune Mask installed
 - Install any Miui Magisk Module which depends on this module
 - Reboot
 - If you are using KernelSU, you need to allow superuser list manually all package name listed in package.txt (enable show system apps) and reboot afterwards

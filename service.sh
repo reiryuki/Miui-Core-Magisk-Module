@@ -6,6 +6,23 @@ set -x
 
 # var
 API=`getprop ro.build.version.sdk`
+MOD=/data/adb/modules/nomount
+NM=$MOD/bin/nm
+NOMOUNT=false
+[ ! -f $MOD/disable ] && [ -x $NM ] && $NM v >/dev/null 2>&1 && NOMOUNT=true
+
+# NoMount
+if $NOMOUNT; then
+  FILES=`find $MODPATH/system $MODPATH/vendor -type f -name public.libraries.txt`
+  for FILE in $FILES; do
+    DES=`echo $FILE | sed "s|$MODPATH||g"`
+    RDES=`realpath $DES`
+    if [ -f $RDES ]; then
+      $NM del $RDES 2>/dev/null || true
+      $NM add $RDES $FILE
+    fi
+  done
+fi
 
 # prop
 PROP=`getprop ro.product.device`
@@ -81,7 +98,7 @@ if [ "$API" -ge 34 ]; then
   appops set $PKG READ_MEDIA_VISUAL_USER_SELECTED allow
 fi
 PKGOPS=`appops get $PKG`
-UID=`dumpsys package $PKG 2>/dev/null | grep -m 1 Id= | sed -e 's|    userId=||g' -e 's|    appId=||g'`
+UID=`grep "^$PKG " /data/system/packages.list | awk '{print $2}'`
 if [ "$UID" ] && [ "$UID" -gt 9999 ]; then
   appops set --uid "$UID" LEGACY_STORAGE allow
   appops set --uid "$UID" READ_EXTERNAL_STORAGE allow
@@ -98,12 +115,12 @@ fi
 
 # allow
 PKG=com.miui.system
-if appops get $PKG > /dev/null 2>&1; then
+if appops get $PKG >/dev/null 2>&1; then
   if [ "$API" -ge 30 ]; then
     appops set $PKG AUTO_REVOKE_PERMISSIONS_IF_UNUSED ignore
   fi
   PKGOPS=`appops get $PKG`
-  UID=`dumpsys package $PKG 2>/dev/null | grep -m 1 Id= | sed -e 's|    userId=||g' -e 's|    appId=||g'`
+  UID=`grep "^$PKG " /data/system/packages.list | awk '{print $2}'`
   if [ "$UID" ] && [ "$UID" -gt 9999 ]; then
     UIDOPS=`appops get --uid "$UID"`
   fi
@@ -111,12 +128,12 @@ fi
 
 # allow
 PKG=com.miui.rom
-if appops get $PKG > /dev/null 2>&1; then
+if appops get $PKG >/dev/null 2>&1; then
   if [ "$API" -ge 30 ]; then
     appops set $PKG AUTO_REVOKE_PERMISSIONS_IF_UNUSED ignore
   fi
   PKGOPS=`appops get $PKG`
-  UID=`dumpsys package $PKG 2>/dev/null | grep -m 1 Id= | sed -e 's|    userId=||g' -e 's|    appId=||g'`
+  UID=`grep "^$PKG " /data/system/packages.list | awk '{print $2}'`
   if [ "$UID" ] && [ "$UID" -gt 9999 ]; then
     UIDOPS=`appops get --uid "$UID"`
   fi
@@ -124,19 +141,19 @@ fi
 
 # grant
 PKG=com.miui.core
-if appops get $PKG > /dev/null 2>&1; then
+if appops get $PKG >/dev/null 2>&1; then
   pm grant --all-permissions $PKG
   appops_set
 fi
 
 # allow
 PKG=com.xiaomi.micloud.sdk
-if appops get $PKG > /dev/null 2>&1; then
+if appops get $PKG >/dev/null 2>&1; then
   if [ "$API" -ge 30 ]; then
     appops set $PKG AUTO_REVOKE_PERMISSIONS_IF_UNUSED ignore
   fi
   PKGOPS=`appops get $PKG`
-  UID=`dumpsys package $PKG 2>/dev/null | grep -m 1 Id= | sed -e 's|    userId=||g' -e 's|    appId=||g'`
+  UID=`grep "^$PKG " /data/system/packages.list | awk '{print $2}'`
   if [ "$UID" ] && [ "$UID" -gt 9999 ]; then
     UIDOPS=`appops get --uid "$UID"`
   fi
