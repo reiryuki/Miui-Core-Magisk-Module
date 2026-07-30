@@ -182,8 +182,8 @@ fi
 # recovery
 mount_partitions_in_recovery
 
-# magisk
-magisk_setup
+# mirror
+mirror_setup
 
 # path
 SYSTEM=`realpath $MIRROR/system`
@@ -192,6 +192,7 @@ PRODUCT=`realpath $MIRROR/product`
 SYSTEM_EXT=`realpath $MIRROR/system_ext`
 ODM=`realpath $MIRROR/odm`
 MY_PRODUCT=`realpath $MIRROR/my_product`
+APEX=`realpath $MIRROR/apex`
 
 # sepolicy
 FILE=$MODPATH/sepolicy.rule
@@ -251,7 +252,18 @@ if [ "$ABILIST32" ]; then
 fi
 
 # function
+file_apex_or_system() {
+FILE=`for LIST in $LISTS; do
+        APEX_FILE=$(find $APEX/*$DIR -maxdepth 1 -name $LIST)
+        if [ "$APEX_FILE" ]; then
+          echo $APEX/*$DIR/$LIST
+        else
+          echo $SYSTEM$DIR/$LIST
+        fi
+      done`
+}
 check_function() {
+file_apex_or_system
 ui_print "- Checking"
 ui_print "$NAME"
 ui_print "  function at"
@@ -268,75 +280,67 @@ ui_print " "
 SYSTEM_10=false
 NAME=_ZN7android23sp_report_stack_pointerEv
 if [ "$IS64BIT" == true ]; then
+  DIR=/lib64
   DES=$MODPATH/system/bin/shelld
   if [ -f $DES ]; then
-    LISTS=`strings $DES | grep ^lib | grep .so\
+    LISTS=`strings $DES | grep ^lib | grep \.so$\
             | sed -e 's|libshellservice.so||g' -e 's|libshell_jni.so||g'`
-    FILE=`for LIST in $LISTS; do echo $SYSTEM/lib64/$LIST; done`
     check_function
   fi
   DES=$MODPATH/system/bin/miuibooster
   if [ -f $DES ] && [ $SYSTEM_10 != true ]; then
-    LISTS=`strings $DES | grep ^lib | grep .so`
-    FILE=`for LIST in $LISTS; do echo $SYSTEM/lib64/$LIST; done`
+    LISTS=`strings $DES | grep ^lib | grep \.so$`
     check_function
   fi
-  DES=$MODPATH/system/lib64/libexmedia.so
+  DES=$MODPATH/system$DIR/libexmedia.so
   if [ -f $DES ] && [ $SYSTEM_10 != true ]; then
-    LISTS=`strings $DES | grep ^lib | grep .so\
+    LISTS=`strings $DES | grep ^lib | grep \.so$\
             | sed 's|libexmedia.so||g'`
-    FILE=`for LIST in $LISTS; do echo $SYSTEM/lib64/$LIST; done`
     check_function
   fi
-  DES=$MODPATH/system/lib64/libmiuiblur.so
+  DES=$MODPATH/system$DIR/libmiuiblur.so
   if [ -f $DES ] && [ $SYSTEM_10 != true ]; then
-    LISTS=`strings $DES | grep ^lib | grep .so\
+    LISTS=`strings $DES | grep ^lib | grep \.so$\
             | sed 's|libmiuiblur.so||g'`
-    FILE=`for LIST in $LISTS; do echo $SYSTEM/lib64/$LIST; done`
     check_function
   fi
-  DES=$MODPATH/system/lib64/libshell.so
+  DES=$MODPATH/system$DIR/libshell.so
   if [ -f $DES ] && [ $SYSTEM_10 != true ]; then
-    LISTS=`strings $DES | grep ^lib | grep .so\
+    LISTS=`strings $DES | grep ^lib | grep \.so$\
             | sed 's|libshell.so||g'`
-    FILE=`for LIST in $LISTS; do echo $SYSTEM/lib64/$LIST; done`
     check_function
   fi
-  DES=$MODPATH/system/vendor/lib64/libcdsprpc.so
+  DES=$MODPATH/system/vendor$DIR/libcdsprpc.so
   if [ -f $DES ] && [ $SYSTEM_10 != true ]; then
-    LISTS=`strings $DES | grep ^lib | grep .so\
+    LISTS=`strings $DES | grep ^lib | grep \.so$\
             | sed -e 's|libcdsprpc.so||g' -e 's|lib%s_skel.so||g'`
-    FILE=`for LIST in $LISTS; do echo $SYSTEM/lib64/$LIST; done`
     check_function
   fi
 fi
 if [ "$ABILIST32" ]; then
-  DES=$MODPATH/system/lib/libexmedia.so
+  DIR=/lib
+  DES=$MODPATH/system$DIR/libexmedia.so
   if [ -f $DES ] && [ $SYSTEM_10 != true ]; then
-    LISTS=`strings $DES | grep ^lib | grep .so\
+    LISTS=`strings $DES | grep ^lib | grep \.so$\
             | sed 's|libexmedia.so||g'`
-    FILE=`for LIST in $LISTS; do echo $SYSTEM/lib/$LIST; done`
     check_function
   fi
-  DES=$MODPATH/system/lib/libmiuiblur.so
+  DES=$MODPATH/system$DIR/libmiuiblur.so
   if [ -f $DES ] && [ $SYSTEM_10 != true ]; then
-    LISTS=`strings $DES | grep ^lib | grep .so\
+    LISTS=`strings $DES | grep ^lib | grep \.so$\
            | sed 's|libmiuiblur.so||g'`
-    FILE=`for LIST in $LISTS; do echo $SYSTEM/lib/$LIST; done`
     check_function
   fi
-  DES=$MODPATH/system/lib/libshell.so
+  DES=$MODPATH/system$DIR/libshell.so
   if [ -f $DES ] && [ $SYSTEM_10 != true ]; then
-    LISTS=`strings $DES | grep ^lib | grep .so\
+    LISTS=`strings $DES | grep ^lib | grep \.so$\
            | sed 's|libshell.so||g'`
-    FILE=`for LIST in $LISTS; do echo $SYSTEM/lib/$LIST; done`
     check_function
   fi
-  DES=$MODPATH/system/vendor/lib/libcdsprpc.so
+  DES=$MODPATH/system/vendor$DIR/libcdsprpc.so
   if [ -f $DES ] && [ $SYSTEM_10 != true ]; then
-    LISTS=`strings $DES | grep ^lib | grep .so\
+    LISTS=`strings $DES | grep ^lib | grep \.so$\
             | sed -e 's|libcdsprpc.so||g' -e 's|lib%s_skel.so||g'`
-    FILE=`for LIST in $LISTS; do echo $SYSTEM/lib/$LIST; done`
     check_function
   fi
 fi
@@ -350,11 +354,12 @@ fi
 NAME=_ZN7android7meminfo11ProcMemInfo18ForEachVmaFromMapsERKNSt3__18functionIFvRKNS0_3VmaEEEE
 NAME2=_ZN7android7meminfo11ProcMemInfo18ForEachVmaFromMapsERKNSt3__18functionIFbRNS0_3VmaEEEE
 if [ "$IS64BIT" == true ]; then
-  DES=$MODPATH/system/lib64/libmiui_runtime.so
+  DIR=/lib64
+  DES=$MODPATH/system$DIR/libmiui_runtime.so
   if [ -f $DES ]; then
-    LISTS=`strings $DES | grep ^lib | grep .so\
+    LISTS=`strings $DES | grep ^lib | grep \.so$\
             | sed 's|libmiui_runtime.so||g'`
-    FILE=`for LIST in $LISTS; do echo $SYSTEM/lib64/$LIST; done`
+    file_apex_or_system
     ui_print "- Checking"
     ui_print "$NAME"
     ui_print "  function at"
@@ -362,17 +367,18 @@ if [ "$IS64BIT" == true ]; then
     ui_print "  Please wait..."
     if ! grep -q $NAME $FILE; then
       ui_print "  Using modified libmiui_runtime.so"
-      cp -rf $MODPATH/system_15/lib64 $MODPATH/system
+      cp -rf $MODPATH/system_15$DIR $MODPATH/system
     fi
     ui_print " "
   fi
 fi
 if [ "$ABILIST32" ]; then
-  DES=$MODPATH/system/lib/libmiui_runtime.so
+  DIR=/lib
+  DES=$MODPATH/system$DIR/libmiui_runtime.so
   if [ -f $DES ]; then
-    LISTS=`strings $DES | grep ^lib | grep .so\
+    LISTS=`strings $DES | grep ^lib | grep \.so$\
             | sed 's|libmiui_runtime.so||g'`
-    FILE=`for LIST in $LISTS; do echo $SYSTEM/lib/$LIST; done`
+    file_apex_or_system
     ui_print "- Checking"
     ui_print "$NAME"
     ui_print "  function at"
@@ -380,7 +386,7 @@ if [ "$ABILIST32" ]; then
     ui_print "  Please wait..."
     if ! grep -q $NAME $FILE; then
       ui_print "  Using modified libmiui_runtime.so"
-      cp -rf $MODPATH/system_15/lib $MODPATH/system
+      cp -rf $MODPATH/system_15$DIR $MODPATH/system
     fi
     ui_print " "
   fi
@@ -536,13 +542,16 @@ cp -f $MODPATH/system/framework/MiuiBooster.jar $DIR
 # unmount
 unmount_mirror
 
-
-
-
-
-
-
-
+# prepare
+PKG=com.miui.core
+DIR=/storage/emulated/"$UID"/Android/data/$PKG/files
+DIR2=/storage/emulated/"$UID"/Android/data/$PKG/cache
+ui_print "- Creating directories:"
+ui_print "  $DIR"
+mkdir -p $DIR
+ui_print "  $DIR2"
+mkdir -p $DIR2
+ui_print " "
 
 
 

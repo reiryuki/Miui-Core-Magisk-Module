@@ -167,9 +167,5 @@ for NAME in $NAMES; do
   fi
 done
 
-# dir
-UID=`id -u`
-[ ! "$UID" ] && UID=0
-mkdir -p /storage/emulated/"$UID"/Android/data/com.miui.core/files
 
 

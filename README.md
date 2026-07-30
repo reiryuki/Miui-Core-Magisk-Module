@@ -44,6 +44,10 @@
 
 ## Changelog
 
+v6.9
+- Check functions in mirror /apex files instead of mirror /system if exist
+- Fix getStringArray in android.util.MiuiMultiWindowAdapter
+
 v6.8
 - Support NoMount metamodule
 - Resets module folders/files permissions at post-fs-data
@@ -80,9 +84,6 @@ v6.1
 - Fix architecture detection in some weird ROMs
 - Fix bug in uninstall.sh
 
-v6.0
-- Allow installation in Android Emulator
-
 ## Requirements
 - NOT in Miui ROM
 - arm64-v8a or armeabi-v7a architecture
@@ -91,7 +92,7 @@ v6.0
 
 ## Installation Guide & Download Link
 - If you are using KernelSU, you need to disable Unmount Modules by Default in KernelSU app settings and install https://github.com/KernelSU-Modules-Repo/meta-overlayfs or https://github.com/KernelSU-Modules-Repo/magic_mount_rs or https://github.com/KernelSU-Modules-Repo/hybrid_mount or https://github.com/maxsteeel/nomount first depending on ROM compatibility
-- Install this module https://devuploads.com/83ykbatywwyy via Magisk app or Kitsune Mask app or KernelSU app or Apatch app or Recovery if Magisk or Kitsune Mask installed
+- Install this module via Magisk app or Kitsune Mask app or KernelSU app or Apatch app or Recovery if Magisk or Kitsune Mask installed
 - Install any Miui Magisk Module which depends on this module
 - Reboot
 - If you are using KernelSU, you need to allow superuser list manually all package name listed in package.txt (enable show system apps) and reboot afterwards
@@ -124,7 +125,7 @@ Global: https://t.me/ryukinotes/34
 ## Credits and Contributors
 - @HuskyDG
 - https://t.me/androidryukimodsdiscussions
-- You can contribute ideas about this Magisk Module here: https://t.me/androidappsportdevelopment
+- https://t.me/androidappsportdevelopment
 
 ## Sponsors
 https://t.me/ryukinotes/25
