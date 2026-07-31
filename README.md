@@ -92,10 +92,13 @@ v6.1
 
 ## Installation Guide & Download Link
 - If you are using KernelSU, you need to disable Unmount Modules by Default in KernelSU app settings and install https://github.com/KernelSU-Modules-Repo/meta-overlayfs or https://github.com/KernelSU-Modules-Repo/magic_mount_rs or https://github.com/KernelSU-Modules-Repo/hybrid_mount or https://github.com/maxsteeel/nomount first depending on ROM compatibility
-- Install this module https://devuploads.com/pkb63t7wuwwe via Magisk app or Kitsune Mask app or KernelSU app or Apatch app or Recovery if Magisk or Kitsune Mask installed
+- Install this module https://bicolink.com/x2JtawlR via Magisk app or Kitsune Mask app or KernelSU app or Apatch app or Recovery if Magisk or Kitsune Mask installed
 - Install any Miui Magisk Module which depends on this module
 - Reboot
 - If you are using KernelSU, you need to allow superuser list manually all package name listed in package.txt (enable show system apps) and reboot afterwards
+
+## Download Tutorial
+https://t.me/ryukinotes/97
 
 ## Miui Magisk Modules Available
 - https://github.com/reiryuki/Mi-Music-Magisk-Module
